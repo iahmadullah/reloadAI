@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Detail — Reloadux AI Design</title>
+    <meta name="description"
+        content="Detailed breakdown of an AI UX pattern — context, usage, user expectations and related patterns.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="aidesign.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header header--light" id="header">
+        <div class="header__container">
+            <a href="/" class="header__logo" id="logo">reload<span class="header__logo-bold">ux</span></a>
+            <nav class="header__nav" id="main-nav">
+                <a href="index.html#work" class="header__nav-link">work</a>
+                <a href="index.html#process" class="header__nav-link">process</a>
+                <a href="index.html#services" class="header__nav-link">services</a>
+                <a href="index.html#launch" class="header__nav-link">launch &amp; grow</a>
+                <a href="index.html#about" class="header__nav-link">about us</a>
+                <a href="aidesign.html" class="header__nav-link header__nav-link--active">ai design</a>
+            </nav>
+            <a href="index.html#contact" class="btn btn--outline-white btn--sm" id="header-cta">Let's Talk.</a>
+            <button class="header__hamburger" id="hamburger"
+                aria-label="Toggle menu"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <main class="aid-detail">
+
+        <!-- DETAIL HERO -->
+        <section class="aid-detail-hero" id="detail-hero">
+            <div class="aid-detail-hero__container">
+                <a href="aidesign.html" class="aid-detail-hero__back" id="back-link">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    Back to catalogue
+                </a>
+                <span class="aid-detail-hero__badge" id="detail-badge">Authoring</span>
+                <h1 class="aid-detail-hero__title" id="detail-title">Pattern Name</h1>
+                <p class="aid-detail-hero__subtitle" id="detail-subtitle">Short description goes here.</p>
+            </div>
+        </section>
+
+        <!-- DETAIL CONTENT -->
+        <section class="aid-detail-content">
+            <div class="aid-detail-content__container">
+
+                <!-- Main Column -->
+                <div class="aid-detail-main">
+
+                    <!-- Preview -->
+                    <div class="aid-detail-preview" id="detail-preview">
+                        <div class="aid-card__mockup aid-detail-preview__mockup">
+                            <div class="aid-card__mockup-line" style="background:#7c3aed22;"></div>
+                            <div class="aid-card__mockup-line aid-card__mockup-line--short"
+                                style="background:#7c3aed33;"></div>
+                            <div class="aid-card__mockup-line"></div>
+                            <div class="aid-card__mockup-line aid-card__mockup-line--short"></div>
+                            <div class="aid-card__mockup-btn">Generate</div>
+                        </div>
+                    </div>
+
+                    <!-- Overview -->
+                    <div class="aid-detail-section">
+                        <h2 class="aid-detail-section__title">Overview</h2>
+                        <div class="aid-detail-section__body" id="detail-overview">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Context & When To Use -->
+                    <div class="aid-detail-section">
+                        <h2 class="aid-detail-section__title">When To Use</h2>
+                        <ul class="aid-detail-section__list" id="detail-when"></ul>
+                    </div>
+
+                    <!-- User Expectations -->
+                    <div class="aid-detail-section">
+                        <h2 class="aid-detail-section__title">User Expectations</h2>
+                        <ul class="aid-detail-section__list" id="detail-expectations"></ul>
+                    </div>
+
+                    <!-- Design Considerations -->
+                    <div class="aid-detail-section">
+                        <h2 class="aid-detail-section__title">Design Considerations</h2>
+                        <div class="aid-detail-section__body" id="detail-considerations">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="aid-detail-sidebar">
+                    <div class="aid-detail-sidebar__card">
+                        <h3 class="aid-detail-sidebar__title">At a Glance</h3>
+                        <div class="aid-detail-sidebar__item">
+                            <span class="aid-detail-sidebar__label">Category</span>
+                            <span class="aid-detail-sidebar__value" id="sidebar-category">—</span>
+                        </div>
+                        <div class="aid-detail-sidebar__item">
+                            <span class="aid-detail-sidebar__label">Complexity</span>
+                            <span class="aid-detail-sidebar__value" id="sidebar-complexity">—</span>
+                        </div>
+                        <div class="aid-detail-sidebar__item">
+                            <span class="aid-detail-sidebar__label">Best For</span>
+                            <span class="aid-detail-sidebar__value" id="sidebar-bestfor">—</span>
+                        </div>
+                    </div>
+                    <div class="aid-detail-sidebar__card">
+                        <h3 class="aid-detail-sidebar__title">Related Patterns</h3>
+                        <div class="aid-detail-sidebar__tags" id="sidebar-related"></div>
+                    </div>
+                </aside>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer__container">
+            <div class="footer__top">
+                <div class="footer__brand"><a href="/" class="footer__logo">reload<span>ux</span></a></div>
+                <div class="footer__col">
+                    <h4 class="footer__col-title">Contact info</h4>
+                    <a href="mailto:info@reloadux.com" class="footer__link">info@reloadux.com</a>
+                </div>
+                <div class="footer__col">
+                    <h4 class="footer__col-title">Our Location</h4>
+                    <p class="footer__text">Reston, VA 20190</p>
+                </div>
+            </div>
+            <div class="footer__divider"></div>
+            <p class="footer__copyright">© 2024 Reloadux. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="mockup-renderer.js"></script>
+    <script src="aidesign-detail-data.js"></script>
+</body>
+
+</html>
