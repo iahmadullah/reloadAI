@@ -813,3 +813,147 @@
         -webkit-overflow-scrolling: touch;
     }
 }
+
+/* Figma Export Button */
+.aid-figma-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 20px;
+    background: #000000;
+    border: 1px solid #000000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: not-allowed;
+    opacity: 0.95;
+    transition: all 0.2s ease;
+}
+
+.aid-figma-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.aid-figma-icon {
+    width: 14px;
+    height: 18px;
+}
+
+.aid-coming-soon-chip {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    color: #fff;
+    margin-left: 4px;
+}
+
+/* Code Widget */
+.aid-code-widget {
+    background: #1e1e1e;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #333333;
+    margin-top: 16px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}
+
+.aid-code-header {
+    background: #2d2d2d;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333333;
+    font-family: var(--font-sans);
+}
+
+.aid-code-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.aid-code-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.aid-code-dots span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.aid-code-dots .red {
+    background: #ff5f56;
+}
+
+.aid-code-dots .yellow {
+    background: #ffbd2e;
+}
+
+.aid-code-dots .green {
+    background: #27c93f;
+}
+
+.aid-code-lang {
+    font-size: 13px;
+    font-weight: 500;
+    color: #cccccc;
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+}
+
+.aid-code-badge {
+    font-size: 11px;
+    color: #ce9178;
+    background: rgba(206, 145, 120, 0.15);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.aid-code-block {
+    margin: 0;
+    padding: 24px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #d4d4d4;
+    background: #1e1e1e;
+    border: none;
+}
+
+.aid-code-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.aid-code-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #cccccc;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.aid-code-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}

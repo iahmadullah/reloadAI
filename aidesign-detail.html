@@ -48,9 +48,35 @@
                     </svg>
                     Back to catalogue
                 </a>
-                <span class="aid-detail-hero__badge" id="detail-badge">Authoring</span>
-                <h1 class="aid-detail-hero__title" id="detail-title">Pattern Name</h1>
-                <p class="aid-detail-hero__subtitle" id="detail-subtitle">Short description goes here.</p>
+                <div class="aid-detail-hero__header"
+                    style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px;">
+                    <div style="flex: 1; min-width: 300px;">
+                        <span class="aid-detail-hero__badge" id="detail-badge">Authoring</span>
+                        <h1 class="aid-detail-hero__title" id="detail-title">Pattern Name</h1>
+                        <p class="aid-detail-hero__subtitle" id="detail-subtitle">Short description goes here.</p>
+                    </div>
+                    <div class="aid-detail-hero__actions" style="margin-top: 20px;">
+                        <button class="aid-figma-btn" disabled title="Figma Export (Coming Soon)">
+                            <svg width="14" height="20" viewBox="0 0 38 57" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" class="aid-figma-icon">
+                                <path
+                                    d="M19 28.5V19H28.5C33.7467 19 38 23.2533 38 28.5C38 33.7467 33.7467 38 28.5 38H19V28.5Z"
+                                    fill="#1ABCFE" />
+                                <path
+                                    d="M0 47.5C0 42.2533 4.25329 38 9.5 38H19V47.5C19 52.7467 14.7467 57 9.5 57C4.25329 57 0 52.7467 0 47.5Z"
+                                    fill="#0ACF83" />
+                                <path d="M19 0L9.5 0C4.25329 0 0 4.25329 0 9.5C0 14.7467 4.25329 19 9.5 19H19V0Z"
+                                    fill="#F24E1E" />
+                                <path d="M0 28.5C0 23.2533 4.25329 19 9.5 19H19V38H9.5C4.25329 38 0 33.7467 0 28.5Z"
+                                    fill="#A259FF" />
+                                <path d="M38 9.5C38 4.25329 33.7467 0 28.5 0H19V19H28.5C33.7467 19 38 14.7467 38 9.5Z"
+                                    fill="#FF7262" />
+                            </svg>
+                            Figma Export
+                            <span class="aid-coming-soon-chip">Coming soon</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -98,6 +124,51 @@
                         <h2 class="aid-detail-section__title">Design Considerations</h2>
                         <div class="aid-detail-section__body" id="detail-considerations">
                             <p>Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Developer Code Snippet -->
+                    <div class="aid-detail-section" style="margin-top: 24px;">
+                        <h2 class="aid-detail-section__title" style="margin-bottom: 0;">Developer Implementation</h2>
+                        <p style="font-size: 15px; margin-top: 8px; color: var(--gray-500); line-height: 1.6;">
+                            Use the code snippet below to quickly integrate this AI design pattern into your project.
+                            Copy the raw layout code directly, or download it for your own components.
+                        </p>
+                        <div class="aid-code-widget">
+                            <div class="aid-code-header">
+                                <div class="aid-code-header-left">
+                                    <div class="aid-code-dots">
+                                        <span class="red"></span>
+                                        <span class="yellow"></span>
+                                        <span class="green"></span>
+                                    </div>
+                                    <span class="aid-code-lang">html/css/js</span>
+                                    <span class="aid-code-badge" id="code-status">production_ready</span>
+                                </div>
+                                <div class="aid-code-actions">
+                                    <button class="aid-code-btn" id="copy-code-btn" title="Copy Code">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                        </svg>
+                                        Copy
+                                    </button>
+                                    <button class="aid-code-btn" id="download-code-btn" title="Download Component">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                            <polyline points="7 10 12 15 17 10"></polyline>
+                                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                                        </svg>
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                            <pre class="aid-code-block"
+                                style="background: #0f172a; border: none; margin: 0; padding: 24px;"><code id="detail-code-snippet" style="color: #f8fafc; font-family: monospace; font-size: 14px;">Loading snippet...</code></pre>
                         </div>
                     </div>
 

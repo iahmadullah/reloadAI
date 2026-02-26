@@ -647,6 +647,33 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detail-title').textContent = titleText;
     document.getElementById('detail-subtitle').textContent = data.overview.split('.')[0] + '.';
 
+    // Force Figma Button to be present (cache fix)
+    let actionsContainer = document.querySelector('.aid-detail-hero__actions');
+    if (!actionsContainer) {
+        actionsContainer = document.createElement('div');
+        actionsContainer.className = 'aid-detail-hero__actions';
+        actionsContainer.style.marginTop = '20px';
+        const header = document.querySelector('.aid-detail-hero__header');
+        if (header) {
+            header.appendChild(actionsContainer);
+        }
+    }
+    if (!document.querySelector('.aid-figma-btn') && actionsContainer) {
+        actionsContainer.innerHTML = `
+            <button class="aid-figma-btn" disabled title="Figma Export (Coming Soon)">
+                <svg width="14" height="20" viewBox="0 0 38 57" fill="none" xmlns="http://www.w3.org/2000/svg" class="aid-figma-icon">
+                    <path d="M19 28.5V19H28.5C33.7467 19 38 23.2533 38 28.5C38 33.7467 33.7467 38 28.5 38H19V28.5Z" fill="#1ABCFE" />
+                    <path d="M0 47.5C0 42.2533 4.25329 38 9.5 38H19V47.5C19 52.7467 14.7467 57 9.5 57C4.25329 57 0 52.7467 0 47.5Z" fill="#0ACF83" />
+                    <path d="M19 0L9.5 0C4.25329 0 0 4.25329 0 9.5C0 14.7467 4.25329 19 9.5 19H19V0Z" fill="#F24E1E" />
+                    <path d="M0 28.5C0 23.2533 4.25329 19 9.5 19H19V38H9.5C4.25329 38 0 33.7467 0 28.5Z" fill="#A259FF" />
+                    <path d="M38 9.5C38 4.25329 33.7467 0 28.5 0H19V19H28.5C33.7467 19 38 14.7467 38 9.5Z" fill="#FF7262" />
+                </svg>
+                Figma Export
+                <span class="aid-coming-soon-chip">Coming soon</span>
+            </button>
+        `;
+    }
+
     // Overview
     document.getElementById('detail-overview').innerHTML = `<p>${data.overview}</p>`;
 
@@ -679,4 +706,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // Preview accent color
     const preview = document.getElementById('detail-preview');
     renderInteractiveMockup(id, data, preview);
+
+    // Code Snippet
+    const snippetCode = `<!-- ${titleText} Implementation -->
+<div class="aid-${id}">
+  <!-- Implementation tailored for ${data.cat.toLowerCase()} context -->
+  <div class="content-wrapper">
+    <!-- UI elements go here -->
+  </div>
+</div>
+
+<script>
+  // Initialize ${titleText}
+  function init${id.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')}() {
+    console.log("Component mounted.");
+  }
+</script>`;
+
+    const codeEl = document.getElementById('detail-code-snippet');
+    if (codeEl) {
+        // Escape HTML
+        codeEl.textContent = snippetCode;
+    }
+
+    const copyBtn = document.getElementById('copy-code-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(snippetCode);
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+            setTimeout(() => copyBtn.innerHTML = originalText, 2000);
+        });
+    }
+
+    const downloadBtn = document.getElementById('download-code-btn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+            const blob = new Blob([snippetCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${id}-component.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    }
 });
