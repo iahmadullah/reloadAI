@@ -1,0 +1,2481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Scheduler Onboarding | Reloadux</title>
+    <meta name="description"
+        content="AI-powered smart scheduler onboarding — Pick your industry and configure your workspace.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f6fa;
+            --white: #ffffff;
+            --text: #111827;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --border-light: #f0f1f4;
+            --accent: #6366f1;
+            --accent-hover: #5457e5;
+            --accent-bg: rgba(99, 102, 241, .06);
+            --accent-glow: rgba(99, 102, 241, .12);
+            --green: #10b981;
+            --green-bg: rgba(16, 185, 129, .08);
+            --grad: linear-gradient(135deg, #6366f1, #818cf8);
+            --grad-wide: linear-gradient(135deg, #6366f1 0%, #0ea5e9 100%);
+            --r: 14px;
+            --r-sm: 10px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, .04);
+            --shadow: 0 4px 16px rgba(0, 0, 0, .05);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, .08);
+            --header-h: 60px;
+            --chat-w: 380px;
+            --transition: .2s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── HEADER ── */
+        header {
+            height: var(--header-h);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -.8px;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo span {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .steps {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sdot {
+            width: 24px;
+            height: 4px;
+            border-radius: 4px;
+            background: var(--border);
+            transition: .4s;
+        }
+
+        .sdot.done {
+            background: var(--green);
+        }
+
+        .sdot.active {
+            background: var(--accent);
+            width: 32px;
+        }
+
+        /* ── WRAP ── */
+        .wrap {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ════════ STEP 1 ════════ */
+        #step1 {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            gap: 32px;
+        }
+
+        .s1-hero {
+            text-align: center;
+        }
+
+        .s1-hero h1 {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: -2.5px;
+            line-height: 1.05;
+            margin-bottom: 12px;
+        }
+
+        .s1-hero h1 em {
+            font-style: normal;
+            background: var(--grad-wide);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .s1-hero p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .s1-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+        }
+
+        .industry-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 860px;
+        }
+
+        .ind-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 10px 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .25s cubic-bezier(.4, 0, .2, 1);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ind-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--grad);
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .ind-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, .3);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, .1);
+        }
+
+        .ind-card.active {
+            border-color: transparent;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .ind-card.active::after {
+            opacity: 1;
+        }
+
+        .ind-card * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ind-card .icon {
+            font-size: 26px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .ind-card .label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: -.2px;
+        }
+
+        .or-div {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            opacity: .6;
+        }
+
+        .s1-ai-banner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 22px;
+            box-shadow: var(--shadow);
+            max-width: 460px;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .s1-ai-banner:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 28px rgba(99, 102, 241, .12);
+            transform: translateY(-2px);
+        }
+
+        .s1-ai-banner .t {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .s1-ai-banner .s {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .av-sm {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, .3);
+        }
+
+        /* ════════ STEP 2 ════════ */
+        #step2 {
+            flex: 1;
+            display: none;
+            overflow: hidden;
+        }
+
+        #step2.visible {
+            display: flex;
+        }
+
+        /* ── Left Panel ── */
+        .s2-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+            background: var(--bg);
+        }
+
+        /* Title area */
+        .title-area {
+            padding: 24px 32px 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-area h2 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.8px;
+        }
+
+        .title-area h2 em {
+            font-style: normal;
+            background: var(--grad-wide);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-area p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .step-badge {
+            padding: 6px 14px;
+            background: var(--accent-bg);
+            color: var(--accent);
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* ── Department Tabs ── */
+        .dept-tabs-wrap {
+            padding: 0 32px 0;
+            flex-shrink: 0;
+        }
+
+        .dept-tabs {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .dept-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .dtab {
+            padding: 9px 18px;
+            border-radius: 9px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition);
+            color: var(--text-secondary);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .dtab:hover {
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .dtab.active {
+            color: var(--white);
+            background: var(--grad);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, .25);
+        }
+
+        .dtab .dtab-count {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, .06);
+            color: var(--text-secondary);
+        }
+
+        .dtab.active .dtab-count {
+            background: rgba(255, 255, 255, .2);
+            color: white;
+        }
+
+        .dtab-x {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            opacity: 0;
+            background: rgba(0, 0, 0, .08);
+            transition: .15s;
+            cursor: pointer;
+        }
+
+        .dtab:hover .dtab-x {
+            opacity: .7;
+        }
+
+        .dtab-x:hover {
+            opacity: 1 !important;
+            background: rgba(239, 68, 68, .15);
+            color: #ef4444;
+        }
+
+        .dtab.active .dtab-x {
+            background: rgba(255, 255, 255, .2);
+            opacity: .7;
+        }
+
+        .dtab-add {
+            padding: 9px 14px;
+            border-radius: 9px;
+            border: 1.5px dashed var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            background: transparent;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+
+        .dtab-add:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-bg);
+        }
+
+        /* ── Config Content ── */
+        .cfg-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 32px 28px;
+            scroll-behavior: smooth;
+        }
+
+        .cfg-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .cfg-scroll::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .cfg-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeUp .3s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cfg-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 22px 24px;
+            box-shadow: var(--shadow-sm);
+            transition: border-color .4s, box-shadow .4s;
+        }
+
+        .cfg-card.highlight {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow);
+        }
+
+        .cfg-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .cfg-card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .cfg-card-icon.hours {
+            background: #fef3c7;
+        }
+
+        .cfg-card-icon.shifts {
+            background: #dbeafe;
+        }
+
+        .cfg-card-icon.roles {
+            background: #ede9fe;
+        }
+
+        .cfg-card-icon.rules {
+            background: #d1fae5;
+        }
+
+        .cfg-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: -.3px;
+        }
+
+        .cfg-card .sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Form rows */
+        .form-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .fg {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .fg label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--text-secondary);
+        }
+
+        .fg input[type=time],
+        .fg select {
+            padding: 9px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            background: var(--bg);
+            transition: var(--transition);
+            color: var(--text);
+        }
+
+        .fg input:focus,
+        .fg select:focus {
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Days */
+        .days-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .dchk {
+            position: relative;
+        }
+
+        .dchk input {
+            opacity: 0;
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .dchk span {
+            display: block;
+            padding: 7px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            transition: var(--transition);
+            user-select: none;
+            color: var(--text-secondary);
+        }
+
+        .dchk input:checked+span {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 2px 6px rgba(99, 102, 241, .2);
+        }
+
+        /* Shifts */
+        .shift-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .shift-card {
+            background: var(--bg);
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--r-sm);
+            padding: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .shift-card:hover {
+            border-color: rgba(99, 102, 241, .3);
+            background: var(--accent-bg);
+        }
+
+        .shift-card.sel {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+        }
+
+        .shift-card .sn {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .shift-card .st {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .shift-card.sel .sn {
+            color: var(--accent);
+        }
+
+        /* Tag list */
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 14px;
+            min-height: 28px;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            background: var(--accent-bg);
+            border: 1px solid rgba(99, 102, 241, .12);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: fadeUp .25s ease;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(99, 102, 241, .4);
+            font-size: 14px;
+            line-height: 1;
+            transition: .15s;
+        }
+
+        .tag button:hover {
+            color: #ef4444;
+        }
+
+        .empty-state {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .add-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .add-row input {
+            flex: 1;
+            padding: 9px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            outline: none;
+            background: var(--bg);
+            transition: var(--transition);
+        }
+
+        .add-row input:focus {
+            border-color: var(--accent);
+            background: white;
+        }
+
+        .btn-sm {
+            padding: 9px 16px;
+            background: var(--text);
+            color: white;
+            border: none;
+            border-radius: var(--r-sm);
+            font-size: 12px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-sm:hover {
+            background: #374151;
+        }
+
+        /* Toggles */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .tl {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .ts {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 1px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .tsl {
+            position: absolute;
+            inset: 0;
+            background: var(--border);
+            border-radius: 22px;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .tsl::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+        }
+
+        .toggle input:checked+.tsl {
+            background: var(--accent);
+        }
+
+        .toggle input:checked+.tsl::before {
+            transform: translateX(18px);
+        }
+
+        /* Bottom bar */
+        .bot-bar {
+            padding: 14px 32px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-ghost {
+            padding: 10px 20px;
+            background: none;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-primary {
+            padding: 12px 26px;
+            background: var(--grad);
+            color: white;
+            border: none;
+            border-radius: var(--r-sm);
+            font-size: 14px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, .25);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, .3);
+        }
+
+        /* ════════ ARIA CHAT SIDEBAR ════════ */
+        .chat-side {
+            width: var(--chat-w);
+            flex-shrink: 0;
+            background: var(--white);
+            border-left: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-side.visible {
+            display: flex;
+        }
+
+        .ch-hdr {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .av {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(99, 102, 241, .25);
+        }
+
+        .ch-hdr .nm {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .ch-hdr .st {
+            font-size: 10px;
+            color: var(--green);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .st-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .ch-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #fafafd;
+        }
+
+        .ch-msgs::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .ch-msgs::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .msg {
+            display: flex;
+            gap: 8px;
+        }
+
+        .msg.ai {
+            align-self: flex-start;
+            max-width: 90%;
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            max-width: 85%;
+            flex-direction: row-reverse;
+        }
+
+        .msg-av {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .bubble {
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .msg.ai .bubble {
+            background: white;
+            border: 1px solid var(--border-light);
+            border-top-left-radius: 4px;
+        }
+
+        .msg.user .bubble {
+            background: var(--grad);
+            color: white;
+            border-top-right-radius: 4px;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, .2);
+        }
+
+        .file-bubble {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--accent-bg);
+            border: 1px solid rgba(99, 102, 241, .15);
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .file-icon {
+            font-size: 20px;
+        }
+
+        .file-info .fn {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .file-info .fs {
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 10px 14px;
+        }
+
+        .typing span {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: bounce 1.4s infinite both;
+        }
+
+        .typing span:nth-child(2) {
+            animation-delay: .16s;
+        }
+
+        .typing span:nth-child(3) {
+            animation-delay: .32s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 6px;
+        }
+
+        .sug-btn {
+            padding: 5px 11px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sug-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .ch-inp {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .ch-inp-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .ch-txt {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .ch-txt:focus {
+            border-color: var(--accent);
+            background: white;
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .ib {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--r-sm);
+            border: 1px solid var(--border);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .ib:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .ib.pri {
+            background: var(--grad);
+            border: none;
+            color: white;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, .2);
+        }
+
+        .upload-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .upload-label:hover {
+            color: var(--accent);
+        }
+
+        .upload-label input[type=file] {
+            display: none;
+        }
+
+        /* ── Step 3 ── */
+        #step3 {
+            flex: 1;
+            display: none;
+            overflow: hidden;
+        }
+
+        #step3.visible {
+            display: flex;
+        }
+
+        .int-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .int-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .int-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .int-card.connected {
+            border-color: var(--green);
+            background: var(--green-bg);
+        }
+
+        .int-card .int-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .int-card .int-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .int-card .int-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .int-card .int-status {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--green);
+            display: none;
+        }
+
+        .int-card.connected .int-status {
+            display: block;
+        }
+
+        .emp-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .emp-table th {
+            text-align: left;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .emp-table td {
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .emp-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .emp-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent-bg);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .kb-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: var(--r-sm);
+            margin-bottom: 8px;
+            animation: fadeUp .3s ease;
+        }
+
+        .kb-item .kb-icon {
+            font-size: 18px;
+        }
+
+        .kb-item .kb-name {
+            font-size: 13px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .kb-item .kb-type {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            padding: 3px 8px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .kb-item button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .kb-item button:hover {
+            color: #ef4444;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--r);
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+        }
+
+        .drop-zone .dz-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .drop-zone .dz-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .drop-zone .dz-sub {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .drop-zone input {
+            display: none;
+        }
+
+        .emp-count-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--green-bg);
+            border: 1px solid rgba(16, 185, 129, .15);
+            border-radius: var(--r-sm);
+            margin-bottom: 14px;
+        }
+
+        .emp-count-bar .ec-num {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .emp-count-bar .ec-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* ── Step 4 & 5 hidden by default ── */
+        #step4 {
+            flex: 1;
+            display: none;
+            overflow: hidden;
+        }
+
+        #step4.visible {
+            display: flex;
+        }
+
+        #step5 {
+            flex: 1;
+            display: none;
+            overflow: hidden;
+        }
+
+        #step5.visible {
+            display: flex;
+        }
+
+        /* ── Review Step ── */
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .rv-card {
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: var(--r-sm);
+            padding: 16px;
+        }
+
+        .rv-card .rv-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .rv-card .rv-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .rv-card .rv-detail {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .rv-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .rv-chip {
+            padding: 4px 10px;
+            background: var(--accent-bg);
+            color: var(--accent);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* ── Planning ── */
+        .planning-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .planning-screen.active {
+            display: flex;
+        }
+
+        .plan-spinner {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: var(--grad);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 12px 30px var(--accent-glow);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .plan-steps {
+            list-style: none;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .plan-steps li {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: .4;
+            transition: .5s;
+        }
+
+        .plan-steps li.done {
+            opacity: 1;
+            color: var(--green);
+        }
+
+        .plan-steps li.active {
+            opacity: 1;
+            color: var(--text);
+        }
+
+        /* ── Suggestions Screen ── */
+        #step5 {
+            flex: 1;
+            display: none;
+            overflow: hidden;
+        }
+
+        #step5.visible {
+            display: flex;
+        }
+
+        .sched-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .sched-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
+            padding: 22px;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sched-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .sched-card.selected {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+        }
+
+        .sched-card .sc-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .sched-card .sc-title {
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            letter-spacing: -.3px;
+        }
+
+        .sched-card .sc-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .sched-card .sc-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .sc-feat {
+            padding: 3px 8px;
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .sched-card.selected .sc-feat {
+            background: rgba(99, 102, 241, .08);
+            border-color: rgba(99, 102, 241, .15);
+            color: var(--accent);
+        }
+
+        .sc-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .sc-badge.rec {
+            background: rgba(16, 185, 129, .1);
+            color: var(--green);
+        }
+
+        .sc-badge.pop {
+            background: rgba(245, 158, 11, .1);
+            color: #f59e0b;
+        }
+
+        /* ── Loading ── */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .loading-screen.active {
+            display: flex;
+        }
+
+        .loading-orb {
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            background: var(--grad);
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            color: white;
+            box-shadow: 0 16px 40px var(--accent-glow);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-14px);
+            }
+        }
+
+        .dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: bounce 1.4s infinite both;
+        }
+
+        .dots span:nth-child(2) {
+            animation-delay: .16s;
+        }
+
+        .dots span:nth-child(3) {
+            animation-delay: .32s;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="aidesign.html" class="logo">reload<span>ux</span></a>
+        <div class="steps">
+            <div class="sdot done" id="d1"></div>
+            <div class="sdot active" id="d2"></div>
+            <div class="sdot" id="d3"></div>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <!-- ═══════ STEP 1 ═══════ -->
+        <div id="step1">
+            <div class="s1-hero">
+                <h1>Welcome to <em>Smart Scheduler</em></h1>
+                <p>Start by selecting the industry that best describes your organisation.</p>
+            </div>
+            <div class="s1-label">Select your industry</div>
+            <div class="industry-grid" id="industryGrid"></div>
+            <div class="or-div">— or let Aria do this for you —</div>
+            <div class="s1-ai-banner" onclick="openFullChat()">
+                <div class="av-sm">✦</div>
+                <div>
+                    <div class="t">Chat with Aria Assistant</div>
+                    <div class="s">Answer a few questions and we'll set everything up.</div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- ═══════ STEP 2 ═══════ -->
+        <div id="step2">
+            <div class="s2-left">
+                <div class="title-area">
+                    <div>
+                        <h2>Configuring <em id="indTitle">Technology</em></h2>
+                        <p>Chat with Aria or edit manually below.</p>
+                    </div>
+                    <div class="step-badge">Step 2 of 3</div>
+                </div>
+
+                <div class="dept-tabs-wrap">
+                    <div class="dept-tabs" id="deptTabs"></div>
+                </div>
+
+                <div class="cfg-scroll" id="cfgScroll"></div>
+
+                <div class="bot-bar">
+                    <button class="btn-ghost" onclick="goBack()">← Back</button>
+                    <button class="btn-primary" onclick="finishSetup()">
+                        Continue
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-side visible" id="chatSide">
+                <div class="ch-hdr">
+                    <div class="av">✦</div>
+                    <div>
+                        <div class="nm">Aria Assistant</div>
+                        <div class="st"><span class="st-dot"></span> Online</div>
+                    </div>
+                </div>
+                <div class="ch-msgs" id="chatMsgs"></div>
+                <div class="ch-inp">
+                    <label class="upload-label">
+                        <input type="file" id="fileInp" accept=".csv,.xlsx,.xls,.pdf,.doc,.docx,.json,.txt"
+                            onchange="handleFileUpload(event)">
+                        📎 Upload document (CSV, PDF, Excel…)
+                    </label>
+                    <div class="ch-inp-row">
+                        <button class="ib" onclick="ariaVoice()" title="Voice">🎙</button>
+                        <input class="ch-txt" id="chatInp" placeholder="Tell Aria what to configure…"
+                            onkeydown="if(event.key==='Enter')sendChat()">
+                        <button class="ib pri" onclick="sendChat()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ STEP 3 ═══════ -->
+        <div id="step3">
+            <div class="s2-left">
+                <div class="title-area">
+                    <div>
+                        <h2>Employee <em>Onboarding</em></h2>
+                        <p>Import employees from HRMS, upload a file, or build a knowledge base.</p>
+                    </div>
+                    <div class="step-badge">Step 3 of 3</div>
+                </div>
+                <div class="cfg-scroll" id="s3Scroll"></div>
+                <div class="bot-bar">
+                    <button class="btn-ghost" onclick="goBackToStep2()">← Back to Config</button>
+                    <button class="btn-primary" onclick="launchScheduler()">Launch Scheduler <svg width="15" height="15"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg></button>
+                </div>
+            </div>
+            <div class="chat-side visible" id="chatSide3">
+                <div class="ch-hdr">
+                    <div class="av">✦</div>
+                    <div>
+                        <div class="nm">Aria Assistant</div>
+                        <div class="st"><span class="st-dot"></span> Online</div>
+                    </div>
+                </div>
+                <div class="ch-msgs" id="chatMsgs3"></div>
+                <div class="ch-inp">
+                    <label class="upload-label"><input type="file" id="fileInp3"
+                            accept=".csv,.xlsx,.xls,.pdf,.doc,.docx,.json,.txt" onchange="handleS3Upload(event)">📎
+                        Upload employee data or documents</label>
+                    <div class="ch-inp-row">
+                        <button class="ib" onclick="ariaVoice3()" title="Voice">🎙</button>
+                        <input class="ch-txt" id="chatInp3" placeholder="Ask Aria to import or configure…"
+                            onkeydown="if(event.key==='Enter')sendChat3()">
+                        <button class="ib pri" onclick="sendChat3()"><svg width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                            </svg></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ═══════ STEP 4 — Review ═══════ -->
+        <div id="step4">
+            <div class="s2-left">
+                <div class="title-area">
+                    <div>
+                        <h2>Review & <em>Confirm</em></h2>
+                        <p>Verify your setup before we build your scheduler.</p>
+                    </div>
+                    <div class="step-badge">Final Review</div>
+                </div>
+                <div class="cfg-scroll" id="s4Scroll"></div>
+                <div class="bot-bar">
+                    <button class="btn-ghost" onclick="goBackToStep3()">← Back</button>
+                    <button class="btn-primary" onclick="startPlanning()">✦ Generate My Scheduler <svg width="15"
+                            height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg></button>
+                </div>
+            </div>
+            <div class="chat-side visible" id="chatSide4">
+                <div class="ch-hdr">
+                    <div class="av">✦</div>
+                    <div>
+                        <div class="nm">Aria Assistant</div>
+                        <div class="st"><span class="st-dot"></span> Online</div>
+                    </div>
+                </div>
+                <div class="ch-msgs" id="chatMsgs4"></div>
+                <div class="ch-inp">
+                    <div class="ch-inp-row"><input class="ch-txt" id="chatInp4" placeholder="Any last changes?"
+                            onkeydown="if(event.key==='Enter')sendChat4()"><button class="ib pri"
+                            onclick="sendChat4()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                            </svg></button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ STEP 5 — Suggestions ═══════ -->
+        <div id="step5">
+            <div class="s2-left">
+                <div class="title-area">
+                    <div>
+                        <h2>Your <em>Scheduler</em> is Ready</h2>
+                        <p>Choose a scheduling approach that works best for your team.</p>
+                    </div>
+                </div>
+                <div class="cfg-scroll" id="s5Scroll"></div>
+                <div class="bot-bar">
+                    <button class="btn-ghost" onclick="startPlanning()">↻ Regenerate</button>
+                    <button class="btn-primary" id="s5GoBtn" onclick="goToScheduler()" disabled style="opacity:.5">Open
+                        Scheduler <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg></button>
+                </div>
+            </div>
+            <div class="chat-side visible" id="chatSide5">
+                <div class="ch-hdr">
+                    <div class="av">✦</div>
+                    <div>
+                        <div class="nm">Aria Assistant</div>
+                        <div class="st"><span class="st-dot"></span> Online</div>
+                    </div>
+                </div>
+                <div class="ch-msgs" id="chatMsgs5"></div>
+                <div class="ch-inp">
+                    <div class="ch-inp-row"><input class="ch-txt" id="chatInp5"
+                            placeholder="Ask Aria about these options…"
+                            onkeydown="if(event.key==='Enter')sendChat5()"><button class="ib pri"
+                            onclick="sendChat5()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13" />
+                                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                            </svg></button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Planning Screen -->
+    <div class="planning-screen" id="planningScreen">
+        <div class="plan-spinner">✦</div>
+        <h1 style="font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:6px">Aria is planning your
+            schedules…</h1>
+        <p style="color:var(--text-secondary);max-width:360px;font-size:13px">Analyzing your team structure, shifts, and
+            preferences.</p>
+        <ul class="plan-steps" id="planSteps">
+            <li id="ps1">✓ Analyzing departments & roles</li>
+            <li id="ps2">✓ Mapping shift patterns</li>
+            <li id="ps3">✓ Checking employee availability</li>
+            <li id="ps4">✓ Generating schedule templates</li>
+        </ul>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-orb">✦</div>
+        <h1 style="font-size:28px;font-weight:800;margin-bottom:8px;letter-spacing:-1px">Launching your workspace…</h1>
+        <p style="color:var(--text-secondary);margin-bottom:24px;max-width:360px;font-size:14px">Opening your Smart
+            Scheduler.</p>
+        <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <script>
+        const IND = [
+            { id: 'tech', e: '💻', n: 'Technology', depts: ['Engineering', 'Product', 'Design', 'Support'], h: { s: '09:00', e: '18:00', d: [1, 1, 1, 1, 1, 0, 0] } },
+            { id: 'health', e: '🏥', n: 'Healthcare', depts: ['Nursing', 'Doctors', 'Admin', 'Emergency'], h: { s: '07:00', e: '19:00', d: [1, 1, 1, 1, 1, 1, 1] } },
+            { id: 'finance', e: '🏦', n: 'Finance', depts: ['Advisors', 'Tellers', 'Operations', 'Compliance'], h: { s: '09:00', e: '17:00', d: [1, 1, 1, 1, 1, 0, 0] } },
+            { id: 'retail', e: '🛍', n: 'Retail', depts: ['Sales Floor', 'Cashiers', 'Stock', 'Management'], h: { s: '08:00', e: '21:00', d: [1, 1, 1, 1, 1, 1, 0] } },
+            { id: 'edu', e: '🎓', n: 'Education', depts: ['Teachers', 'Admin', 'IT', 'Counseling'], h: { s: '08:00', e: '16:00', d: [1, 1, 1, 1, 1, 0, 0] } },
+            { id: 'food', e: '🍽', n: 'Food & Hospitality', depts: ['Kitchen', 'Front of House', 'Bar', 'Management'], h: { s: '10:00', e: '23:00', d: [1, 1, 1, 1, 1, 1, 0] } },
+            { id: 'mfg', e: '🏭', n: 'Manufacturing', depts: ['Assembly', 'QA', 'Logistics', 'Maintenance'], h: { s: '06:00', e: '18:00', d: [1, 1, 1, 1, 1, 1, 0] } },
+            { id: 'other', e: '🏢', n: 'Corporate', depts: ['HR', 'Finance', 'Operations', 'IT'], h: { s: '09:00', e: '18:00', d: [1, 1, 1, 1, 1, 0, 0] } }
+        ];
+        const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const SHIFTS = [{ n: 'Morning', t: '6am – 2pm' }, { n: 'Day', t: '9am – 5pm' }, { n: 'Afternoon', t: '2pm – 10pm' }, { n: 'Night', t: '10pm – 6am' }];
+        let selId = null, depts = [], activeTab = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('industryGrid').innerHTML = IND.map(i => `
+    <div class="ind-card" id="ind-${i.id}" onclick="selectInd('${i.id}')"><span class="icon">${i.e}</span><span class="label">${i.n}</span></div>`).join('');
+        });
+
+        function selectInd(id) {
+            selId = id;
+            document.querySelectorAll('.ind-card').forEach(c => c.classList.remove('active'));
+            document.getElementById('ind-' + id).classList.add('active');
+            const ind = IND.find(i => i.id === id);
+            setTimeout(() => {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').classList.add('visible');
+                document.getElementById('indTitle').textContent = ind.n;
+                depts = ind.depts.map(name => ({ name, hours: { ...ind.h }, roles: [], shifts: ['Day'] }));
+                renderTabs(); renderCfg(0);
+                ariaAI(`I've loaded defaults for <strong>${ind.n}</strong> 🎉 You have <strong>${ind.depts.length} departments</strong> ready. Tell me what to adjust!`);
+                setTimeout(() => ariaSuggestions(['Add a Marketing dept', 'Change hours to 8am–4pm', 'Add Night shift to all', 'Upload employee CSV']), 500);
+            }, 400);
+        }
+
+        function openFullChat() { selectInd('other'); }
+        function goBack() {
+            document.getElementById('step2').classList.remove('visible');
+            document.getElementById('step1').style.display = '';
+            document.getElementById('chatMsgs').innerHTML = ''; selId = null;
+        }
+
+        /* ── TABS ── */
+        function renderTabs() {
+            const c = document.getElementById('deptTabs');
+            c.innerHTML = depts.map((d, i) => `
+    <button class="dtab ${i === activeTab ? 'active' : ''}" onclick="switchTab(${i})">
+      ${d.name}
+      <span class="dtab-count">${d.roles.length}</span>
+      ${depts.length > 1 ? `<span class="dtab-x" onclick="event.stopPropagation();removeDept(${i})">✕</span>` : ''}
+    </button>
+  `).join('') + `<button class="dtab-add" onclick="promptAddDept()">+ Add</button>`;
+        }
+
+        function switchTab(i) { activeTab = i; renderTabs(); renderCfg(i); }
+        function promptAddDept() {
+            const name = prompt('Department name:'); if (!name?.trim()) return;
+            const ind = IND.find(i => i.id === selId);
+            depts.push({ name: name.trim(), hours: { ...ind.h }, roles: [], shifts: ['Day'] });
+            activeTab = depts.length - 1; renderTabs(); renderCfg(activeTab);
+            ariaAI(`Added <strong>${name.trim()}</strong> department ✅`);
+        }
+        function removeDept(i) {
+            if (depts.length <= 1) return; const nm = depts[i].name;
+            depts.splice(i, 1); activeTab = Math.min(activeTab, depts.length - 1);
+            renderTabs(); renderCfg(activeTab); ariaAI(`Removed <strong>${nm}</strong>.`);
+        }
+
+        /* ── CONFIG ── */
+        function renderCfg(i) {
+            const d = depts[i], h = d.hours;
+            const daysH = DAYS.map((day, di) => `<label class="dchk"><input type="checkbox" ${h.d[di] ? 'checked' : ''} onchange="depts[${i}].hours.d[${di}]=this.checked?1:0"><span>${day}</span></label>`).join('');
+            const rolesH = d.roles.length ? d.roles.map((r, ri) => `<div class="tag">${r}<button onclick="rmRole(${i},${ri})">×</button></div>`).join('') : `<span class="empty-state">No roles yet — ask Aria or add manually</span>`;
+            const shiftsH = SHIFTS.map(s => `<div class="shift-card ${d.shifts.includes(s.n) ? 'sel' : ''}" onclick="togShift(${i},'${s.n}',this)"><div class="sn">${s.n}</div><div class="st">${s.t}</div></div>`).join('');
+
+            document.getElementById('cfgScroll').innerHTML = `<div class="cfg-panel">
+    <div class="cfg-card" id="card-hours">
+      <div class="cfg-card-header"><div class="cfg-card-icon hours">⏰</div><div><h3>Working Hours</h3><div class="sub">Default shift window for ${d.name}</div></div></div>
+      <div class="form-row">
+        <div class="fg"><label>Start</label><input type="time" value="${h.s}" onchange="depts[${i}].hours.s=this.value"></div>
+        <div class="fg"><label>End</label><input type="time" value="${h.e}" onchange="depts[${i}].hours.e=this.value"></div>
+        <div class="fg"><label>Break</label><select><option>30 min</option><option selected>1 hour</option><option>1.5 hours</option></select></div>
+      </div>
+      <div class="days-row">${daysH}</div>
+    </div>
+    <div class="cfg-card" id="card-shifts">
+      <div class="cfg-card-header"><div class="cfg-card-icon shifts">🔄</div><div><h3>Shift Types</h3><div class="sub">Active patterns for ${d.name}</div></div></div>
+      <div class="shift-grid">${shiftsH}</div>
+    </div>
+    <div class="cfg-card" id="card-roles">
+      <div class="cfg-card-header"><div class="cfg-card-icon roles">👤</div><div><h3>Roles & Positions</h3><div class="sub">Roles in ${d.name}</div></div></div>
+      <div class="tag-row" id="rolesTags">${rolesH}</div>
+      <div class="add-row"><input type="text" id="roleInp" placeholder="e.g. Senior Developer" onkeydown="if(event.key==='Enter')addRoleManual(${i})"><button class="btn-sm" onclick="addRoleManual(${i})">Add</button></div>
+    </div>
+    <div class="cfg-card" id="card-rules">
+      <div class="cfg-card-header"><div class="cfg-card-icon rules">📋</div><div><h3>Scheduling Rules</h3><div class="sub">Automatic scheduling rules</div></div></div>
+      <div class="toggle-row"><div><div class="tl">Overtime Approval Required</div><div class="ts">Managers must approve extra hours</div></div><label class="toggle"><input type="checkbox" checked><span class="tsl"></span></label></div>
+      <div class="toggle-row"><div><div class="tl">Auto-fill Open Shifts</div><div class="ts">Aria fills gaps using availability</div></div><label class="toggle"><input type="checkbox" checked><span class="tsl"></span></label></div>
+      <div class="toggle-row"><div><div class="tl">Min Rest Between Shifts</div><div class="ts">Enforce 11h rest</div></div><label class="toggle"><input type="checkbox"><span class="tsl"></span></label></div>
+    </div>
+  </div>`;
+        }
+        function togShift(di, n, el) { el.classList.toggle('sel'); const s = depts[di].shifts; if (el.classList.contains('sel')) { if (!s.includes(n)) s.push(n) } else { depts[di].shifts = s.filter(x => x !== n) } }
+        function addRoleManual(di) { const inp = document.getElementById('roleInp'); const v = inp.value.trim(); if (!v) return; depts[di].roles.push(v); inp.value = ''; renderCfg(di); renderTabs(); }
+        function rmRole(di, ri) { depts[di].roles.splice(ri, 1); renderCfg(di); renderTabs(); }
+
+        /* ── CHAT ── */
+        function ariaAI(html) { const c = document.getElementById('chatMsgs'); const d = document.createElement('div'); d.className = 'msg ai'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble">${html}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function ariaUser(text) { const c = document.getElementById('chatMsgs'); const d = document.createElement('div'); d.className = 'msg user'; d.innerHTML = `<div class="bubble">${text}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function ariaFile(name, size) { const c = document.getElementById('chatMsgs'); const d = document.createElement('div'); d.className = 'msg user'; d.innerHTML = `<div class="file-bubble"><span class="file-icon">📄</span><div class="file-info"><div class="fn">${name}</div><div class="fs">${size}</div></div></div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function ariaSuggestions(arr) { const c = document.getElementById('chatMsgs'); const d = document.createElement('div'); d.className = 'suggestions'; d.innerHTML = arr.map(s => `<button class="sug-btn" onclick="useSuggestion(this,'${s}')">${s}</button>`).join(''); c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function ariaTyping() { const c = document.getElementById('chatMsgs'); const d = document.createElement('div'); d.className = 'msg ai'; d.id = 'typing-ind'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function removeTyping() { const t = document.getElementById('typing-ind'); if (t) t.remove(); }
+        function useSuggestion(btn, text) { btn.parentElement.remove(); processUserInput(text); }
+
+        function sendChat() { const inp = document.getElementById('chatInp'); const text = inp.value.trim(); if (!text) return; inp.value = ''; processUserInput(text); }
+
+        function processUserInput(text) {
+            ariaUser(text); ariaTyping();
+            const lower = text.toLowerCase();
+            setTimeout(() => {
+                removeTyping();
+                if (lower.includes('add') && (lower.includes('dept') || lower.includes('department'))) {
+                    const match = text.match(/add\s+(?:a\s+)?(?:department|dept)?\s*(?:called|named)?\s*(.+)/i) || text.match(/add\s+(.+?)\s*dept/i);
+                    let name = match ? match[1].trim().replace(/department|dept/gi, '').trim() : null;
+                    if (!name || name.length < 2) name = 'Marketing';
+                    name = name.charAt(0).toUpperCase() + name.slice(1);
+                    const ind = IND.find(i => i.id === selId);
+                    depts.push({ name, hours: { ...ind.h }, roles: [], shifts: ['Day'] });
+                    activeTab = depts.length - 1; renderTabs(); renderCfg(activeTab); flashCard('card-hours');
+                    ariaAI(`Added <strong>${name}</strong> and switched to it ✅`);
+                    ariaSuggestions(['Add roles to ' + name, 'Change hours', 'Add another dept']);
+                } else if (lower.includes('hour') || lower.includes('time') || lower.match(/\d{1,2}\s*(am|pm)/)) {
+                    const times = text.match(/(\d{1,2})\s*(am|pm)/gi);
+                    if (times && times.length >= 2) {
+                        const parse = t => { const m = t.match(/(\d{1,2})\s*(am|pm)/i); let h = parseInt(m[1]); if (m[2].toLowerCase() === 'pm' && h < 12) h += 12; if (m[2].toLowerCase() === 'am' && h === 12) h = 0; return (h < 10 ? '0' : '') + h + ':00'; };
+                        depts[activeTab].hours.s = parse(times[0]); depts[activeTab].hours.e = parse(times[1]);
+                        renderCfg(activeTab); flashCard('card-hours');
+                        ariaAI(`Updated <strong>${depts[activeTab].name}</strong> hours to <strong>${times[0]} – ${times[1]}</strong> ⏰`);
+                    } else ariaAI(`Tell me the times, like <strong>"8am – 4pm"</strong>.`);
+                } else if (lower.includes('shift')) {
+                    const found = SHIFTS.find(s => lower.includes(s.n.toLowerCase()));
+                    if (found) {
+                        if (lower.includes('all')) { depts.forEach(d => { if (!d.shifts.includes(found.n)) d.shifts.push(found.n); }); } else { if (!depts[activeTab].shifts.includes(found.n)) depts[activeTab].shifts.push(found.n); }
+                        renderCfg(activeTab); flashCard('card-shifts');
+                        ariaAI(`Enabled <strong>${found.n}</strong> shift ${lower.includes('all') ? 'for all departments' : 'for ' + depts[activeTab].name} ✅`);
+                    } else ariaAI(`Which shift? <strong>Morning, Day, Afternoon, Night</strong>.`);
+                } else if (lower.includes('role') || lower.includes('position')) {
+                    const parts = text.replace(/add\s*(roles?|positions?)\s*(to\s*\w+)?\s*:?\s*/i, '').split(/,|and/).map(s => s.trim()).filter(s => s.length > 1);
+                    if (parts.length) { parts.forEach(r => depts[activeTab].roles.push(r)); renderCfg(activeTab); renderTabs(); flashCard('card-roles'); ariaAI(`Added <strong>${parts.join(', ')}</strong> to ${depts[activeTab].name} 👤`); }
+                    else ariaAI(`Example: <strong>"Add roles: Manager, Developer, QA"</strong>`);
+                } else if ((lower.includes('remove') || lower.includes('delete')) && (lower.includes('dept') || lower.includes('department'))) {
+                    if (depts.length <= 1) { ariaAI("Can't remove the last department!"); return; }
+                    const found = depts.findIndex(d => lower.includes(d.name.toLowerCase()));
+                    if (found >= 0) { const nm = depts[found].name; depts.splice(found, 1); activeTab = Math.min(activeTab, depts.length - 1); renderTabs(); renderCfg(activeTab); ariaAI(`Removed <strong>${nm}</strong> ✅`); }
+                    else ariaAI(`Which one? <strong>${depts.map(d => d.name).join(', ')}</strong>.`);
+                } else if (lower.includes('weekend') || lower.includes('saturday') || lower.includes('sunday')) {
+                    if (lower.includes('saturday') || lower.includes('weekend')) depts[activeTab].hours.d[5] = 1;
+                    if (lower.includes('sunday') || lower.includes('weekend')) depts[activeTab].hours.d[6] = 1;
+                    renderCfg(activeTab); flashCard('card-hours'); ariaAI(`Updated working days for <strong>${depts[activeTab].name}</strong> 📅`);
+                } else {
+                    ariaAI(`I can configure departments, hours, shifts, and roles. What would you like? 😊`);
+                    ariaSuggestions(['Add a department', 'Change hours', 'Add Night shift', 'Add roles']);
+                }
+            }, 1100);
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const size = file.size < 1024 ? file.size + 'B' : file.size < 1048576 ? (file.size / 1024).toFixed(1) + 'KB' : (file.size / 1048576).toFixed(1) + 'MB';
+            ariaFile(file.name, size); ariaTyping();
+            setTimeout(() => {
+                removeTyping();
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (['csv', 'xlsx', 'xls'].includes(ext)) {
+                    const fk = [['Sales', 'Customer Success', 'Operations', 'Tech Support'], ['Manager', 'Senior Associate', 'Associate', 'Intern']];
+                    fk[0].forEach(name => { if (!depts.find(d => d.name === name)) { const ind = IND.find(i => i.id === selId); depts.push({ name, hours: { ...ind.h }, roles: [...fk[1]], shifts: ['Day', 'Morning'] }); } });
+                    renderTabs(); renderCfg(0); flashCard('card-roles');
+                    ariaAI(`📊 Processed <strong>${file.name}</strong>:\n\n• <strong>4 departments</strong> added\n• <strong>4 roles</strong> per department\n• <strong>Morning & Day</strong> shifts\n\nAll updated on the left!`);
+                } else if (['pdf', 'doc', 'docx'].includes(ext)) {
+                    depts.forEach(d => { d.shifts = ['Day', 'Morning', 'Night']; }); renderCfg(activeTab); flashCard('card-shifts');
+                    ariaAI(`📝 Scanned <strong>${file.name}</strong>:\n\n• <strong>3 shift patterns</strong> applied\n• <strong>Overtime rules</strong> extracted\n• <strong>11h rest period</strong> enabled`);
+                } else ariaAI(`I support CSV, Excel, PDF, and Word files.`);
+                ariaSuggestions(['Looks good!', 'Add more depts', 'Adjust hours']);
+            }, 2000);
+            e.target.value = '';
+        }
+
+        function flashCard(id) { const card = document.getElementById(id); if (!card) return; card.classList.add('highlight'); card.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => card.classList.remove('highlight'), 2000); }
+        function ariaVoice() { const inp = document.getElementById('chatInp'); inp.placeholder = '🔴 Listening…'; setTimeout(() => { inp.placeholder = 'Tell Aria what to configure…'; inp.value = 'Add a Marketing department'; }, 1500); }
+
+        /* ════════ STEP 3 — Employee Onboarding ════════ */
+        let connectedHRMS = [], employees = [], kbItems = [];
+        const HRMS_LIST = [
+            { id: 'bamboo', name: 'BambooHR', icon: '🎋', desc: 'Sync employees automatically', color: '#73c41d' },
+            { id: 'gusto', name: 'Gusto', icon: '🟠', desc: 'Payroll & HR platform', color: '#f45d48' },
+            { id: 'rippling', name: 'Rippling', icon: '🌊', desc: 'HR, IT & Finance in one', color: '#6366f1' },
+            { id: 'workday', name: 'Workday', icon: '🔵', desc: 'Enterprise HR management', color: '#0875e1' },
+            { id: 'gdrive', name: 'Google Drive', icon: '📁', desc: 'Import CSV from your Drive', color: '#4285f4' },
+            { id: 'csv', name: 'Upload CSV / Excel', icon: '📊', desc: 'Drag & drop your employee file', color: '#10b981' }
+        ];
+        const FAKE_EMP = [
+            { name: 'Sarah Chen', role: 'Senior Developer', dept: 'Engineering', email: 'sarah.c@company.com' },
+            { name: 'James Wilson', role: 'Product Manager', dept: 'Product', email: 'j.wilson@company.com' },
+            { name: 'Maria Garcia', role: 'UX Designer', dept: 'Design', email: 'm.garcia@company.com' },
+            { name: 'David Kim', role: 'Support Lead', dept: 'Support', email: 'd.kim@company.com' },
+            { name: 'Emily Brown', role: 'QA Engineer', dept: 'Engineering', email: 'e.brown@company.com' },
+            { name: 'Alex Johnson', role: 'DevOps Engineer', dept: 'Engineering', email: 'a.johnson@company.com' },
+            { name: 'Lisa Wang', role: 'Marketing Lead', dept: 'Marketing', email: 'l.wang@company.com' },
+            { name: 'Tom Davis', role: 'Frontend Dev', dept: 'Engineering', email: 't.davis@company.com' }
+        ];
+
+        function finishSetup() {
+            document.getElementById('step2').classList.remove('visible');
+            document.getElementById('step3').classList.add('visible');
+            document.getElementById('d2').classList.remove('active'); document.getElementById('d2').classList.add('done');
+            document.getElementById('d3').classList.add('active');
+            renderS3();
+            s3ariaAI(`Welcome to Employee Onboarding! 🎉\n\nYou can:\n• <strong>Connect an HRMS</strong> (BambooHR, Gusto, etc.)\n• <strong>Upload a CSV/Excel</strong> file\n• <strong>Build a Knowledge Base</strong> with policies & docs\n\nWhat would you like to start with?`);
+            setTimeout(() => s3ariaSuggestions(['Connect BambooHR', 'Upload employee CSV', 'Create knowledge base', 'Skip for now']), 500);
+        }
+
+        function goBackToStep2() {
+            document.getElementById('step3').classList.remove('visible');
+            document.getElementById('step2').classList.add('visible');
+            document.getElementById('d3').classList.remove('active');
+            document.getElementById('d2').classList.remove('done'); document.getElementById('d2').classList.add('active');
+        }
+
+        function renderS3() {
+            const intCards = HRMS_LIST.map(h => {
+                const conn = connectedHRMS.includes(h.id);
+                return `<div class="int-card ${conn ? 'connected' : ''}" onclick="connectHRMS('${h.id}')">
+                    <div class="int-logo" style="background:${h.color}15;color:${h.color}">${h.icon}</div>
+                    <div><div class="int-name">${h.name}</div><div class="int-desc">${h.desc}</div></div>
+                    <div class="int-status">✓ Connected</div>
+                </div>`;
+            }).join('');
+
+            const empRows = employees.length ? employees.map(e => `<tr><td><span class="emp-avatar">${e.name.split(' ').map(w => w[0]).join('')}</span>${e.name}</td><td>${e.role}</td><td>${e.dept}</td><td style="color:var(--text-secondary)">${e.email}</td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--text-secondary);font-style:italic;padding:20px">No employees imported yet</td></tr>';
+
+            const kbList = kbItems.length ? kbItems.map((kb, i) => `<div class="kb-item"><span class="kb-icon">${kb.icon}</span><span class="kb-name">${kb.name}</span><span class="kb-type">${kb.type}</span><button onclick="removeKB(${i})">×</button></div>`).join('') : '<div style="color:var(--text-secondary);font-size:12px;font-style:italic;padding:8px 0">No documents yet</div>';
+
+            document.getElementById('s3Scroll').innerHTML = `<div class="cfg-panel">
+                <div class="cfg-card" id="card-hrms">
+                    <div class="cfg-card-header"><div class="cfg-card-icon" style="background:#dbeafe">🔗</div><div><h3>HRMS Integration</h3><div class="sub">Connect your HR system to import employees</div></div></div>
+                    <div class="int-grid">${intCards}</div>
+                </div>
+                <div class="cfg-card" id="card-upload">
+                    <div class="cfg-card-header"><div class="cfg-card-icon" style="background:#fef3c7">📤</div><div><h3>Upload Employee Data</h3><div class="sub">Drag & drop or browse for your file</div></div></div>
+                    <label class="drop-zone" id="dropZone">
+                        <input type="file" accept=".csv,.xlsx,.xls" onchange="handleEmpUpload(event)">
+                        <div class="dz-icon">📂</div>
+                        <div class="dz-text">Drop your CSV or Excel file here</div>
+                        <div class="dz-sub">or click to browse • CSV, XLSX supported</div>
+                    </label>
+                </div>
+                ${employees.length ? `<div class="cfg-card" id="card-employees">
+                    <div class="cfg-card-header"><div class="cfg-card-icon" style="background:#ede9fe">👥</div><div><h3>Imported Employees</h3><div class="sub">${employees.length} employees ready</div></div></div>
+                    <div class="emp-count-bar"><span class="ec-num">${employees.length}</span><span class="ec-label">Employees imported across ${[...new Set(employees.map(e => e.dept))].length} departments</span></div>
+                    <div style="overflow-x:auto"><table class="emp-table"><thead><tr><th>Name</th><th>Role</th><th>Department</th><th>Email</th></tr></thead><tbody>${empRows}</tbody></table></div>
+                </div>` : ''}
+                <div class="cfg-card" id="card-kb">
+                    <div class="cfg-card-header"><div class="cfg-card-icon" style="background:#d1fae5">📚</div><div><h3>Knowledge Base</h3><div class="sub">Add policies, handbooks & training docs</div></div></div>
+                    <div id="kbList">${kbList}</div>
+                    <div class="add-row" style="margin-top:10px">
+                        <input type="text" id="kbInp" placeholder="e.g. Employee Handbook, Leave Policy…" onkeydown="if(event.key==='Enter')addKBManual()">
+                        <button class="btn-sm" onclick="addKBManual()">Add</button>
+                    </div>
+                    <label class="drop-zone" style="margin-top:10px;padding:16px">
+                        <input type="file" accept=".pdf,.doc,.docx,.txt" onchange="handleKBUpload(event)">
+                        <div class="dz-text" style="font-size:12px">📎 Upload PDF, Word, or text documents</div>
+                    </label>
+                </div>
+            </div>`;
+        }
+
+        function connectHRMS(id) {
+            if (connectedHRMS.includes(id)) return;
+            if (id === 'csv') { document.querySelector('#card-upload .drop-zone input').click(); return; }
+            if (id === 'gdrive') { simulateGDrive(); return; }
+            const hrms = HRMS_LIST.find(h => h.id === id);
+            connectedHRMS.push(id);
+            s3ariaAI(`🔗 Connecting to <strong>${hrms.name}</strong>…`);
+            setTimeout(() => {
+                employees = [...FAKE_EMP];
+                renderS3(); flashS3('card-hrms');
+                s3ariaAI(`✅ Connected to <strong>${hrms.name}</strong>! Imported <strong>${employees.length} employees</strong> across ${[...new Set(employees.map(e => e.dept))].length} departments.\n\nYou can see them in the employee table below.`);
+                s3ariaSuggestions(['Add knowledge base', 'Upload more data', 'Launch scheduler']);
+            }, 1500);
+        }
+
+        function simulateGDrive() {
+            s3ariaAI('📁 Opening Google Drive picker…');
+            setTimeout(() => {
+                employees = [...FAKE_EMP.slice(0, 5)];
+                renderS3(); flashS3('card-employees');
+                s3ariaAI(`✅ Imported <strong>employees.csv</strong> from Google Drive!\n\n• <strong>${employees.length} employees</strong> loaded\n• Departments auto-detected`);
+            }, 1800);
+        }
+
+        function handleEmpUpload(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const sz = file.size < 1048576 ? (file.size / 1024).toFixed(1) + 'KB' : (file.size / 1048576).toFixed(1) + 'MB';
+            s3ariaFile(file.name, sz);
+            setTimeout(() => {
+                employees = [...FAKE_EMP];
+                renderS3(); flashS3('card-employees');
+                s3ariaAI(`📊 Processed <strong>${file.name}</strong>!\n\n• <strong>${employees.length} employees</strong> imported\n• <strong>${[...new Set(employees.map(e => e.dept))].length} departments</strong> detected\n• All roles mapped automatically`);
+                s3ariaSuggestions(['Looks good!', 'Add knowledge base', 'Launch scheduler']);
+            }, 1500);
+            e.target.value = '';
+        }
+
+        function handleKBUpload(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const icons = { pdf: '📕', doc: '📘', docx: '📘', txt: '📄' };
+            const ext = file.name.split('.').pop().toLowerCase();
+            kbItems.push({ name: file.name, type: ext.toUpperCase(), icon: icons[ext] || '📄' });
+            renderS3(); flashS3('card-kb');
+            s3ariaAI(`📚 Added <strong>${file.name}</strong> to Knowledge Base ✅`);
+            e.target.value = '';
+        }
+
+        function addKBManual() {
+            const inp = document.getElementById('kbInp');
+            const v = inp.value.trim(); if (!v) return;
+            kbItems.push({ name: v, type: 'POLICY', icon: '📋' });
+            inp.value = ''; renderS3(); flashS3('card-kb');
+        }
+
+        function removeKB(i) { kbItems.splice(i, 1); renderS3(); }
+
+        function flashS3(id) { const card = document.getElementById(id); if (!card) return; card.classList.add('highlight'); card.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => card.classList.remove('highlight'), 2000); }
+
+        /* ── Step 3 Chat ── */
+        function s3ariaAI(html) { const c = document.getElementById('chatMsgs3'); const d = document.createElement('div'); d.className = 'msg ai'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble">${html}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s3ariaUser(text) { const c = document.getElementById('chatMsgs3'); const d = document.createElement('div'); d.className = 'msg user'; d.innerHTML = `<div class="bubble">${text}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s3ariaFile(name, sz) { const c = document.getElementById('chatMsgs3'); const d = document.createElement('div'); d.className = 'msg user'; d.innerHTML = `<div class="file-bubble"><span class="file-icon">📄</span><div class="file-info"><div class="fn">${name}</div><div class="fs">${sz}</div></div></div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s3ariaSuggestions(arr) { const c = document.getElementById('chatMsgs3'); const d = document.createElement('div'); d.className = 'suggestions'; d.innerHTML = arr.map(s => `<button class="sug-btn" onclick="s3useSuggestion(this,'${s}')">${s}</button>`).join(''); c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s3ariaTyping() { const c = document.getElementById('chatMsgs3'); const d = document.createElement('div'); d.className = 'msg ai'; d.id = 'typing3'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s3removeTyping() { const t = document.getElementById('typing3'); if (t) t.remove(); }
+        function s3useSuggestion(btn, text) { btn.parentElement.remove(); s3processInput(text); }
+        function ariaVoice3() { const inp = document.getElementById('chatInp3'); inp.placeholder = '🔴 Listening…'; setTimeout(() => { inp.placeholder = 'Ask Aria to import or configure…'; inp.value = 'Connect BambooHR'; }, 1500); }
+
+        function sendChat3() { const inp = document.getElementById('chatInp3'); const text = inp.value.trim(); if (!text) return; inp.value = ''; s3processInput(text); }
+
+        function s3processInput(text) {
+            s3ariaUser(text); s3ariaTyping();
+            const lower = text.toLowerCase();
+            setTimeout(() => {
+                s3removeTyping();
+                if (lower.includes('bamboo')) { connectHRMS('bamboo'); }
+                else if (lower.includes('gusto')) { connectHRMS('gusto'); }
+                else if (lower.includes('rippling')) { connectHRMS('rippling'); }
+                else if (lower.includes('workday')) { connectHRMS('workday'); }
+                else if (lower.includes('google') || lower.includes('drive')) { simulateGDrive(); }
+                else if (lower.includes('upload') || lower.includes('csv') || lower.includes('import')) {
+                    s3ariaAI('You can drag & drop your CSV or Excel file into the upload area on the left, or click it to browse. I\'ll process it automatically! 📊');
+                }
+                else if (lower.includes('knowledge') || lower.includes('kb') || lower.includes('policy') || lower.includes('handbook')) {
+                    if (lower.includes('add') || lower.includes('create')) {
+                        const items = ['Employee Handbook', 'Leave Policy', 'Code of Conduct', 'Onboarding Guide'];
+                        items.forEach(name => kbItems.push({ name, type: 'POLICY', icon: '📋' }));
+                        renderS3(); flashS3('card-kb');
+                        s3ariaAI(`📚 Created a starter Knowledge Base with:\n\n• <strong>${items.join('</strong>\n• <strong>')}</strong>\n\nYou can add more documents or upload PDFs!`);
+                        s3ariaSuggestions(['Upload a PDF', 'Add more policies', 'Launch scheduler']);
+                    } else {
+                        s3ariaAI('I can help build your Knowledge Base! Tell me to <strong>"create knowledge base"</strong> for starter docs, or upload your own PDFs and policies.');
+                    }
+                }
+                else if (lower.includes('skip')) {
+                    s3ariaAI('No problem! You can always import employees and add documents later from the settings. Ready to launch? 🚀');
+                    s3ariaSuggestions(['Launch scheduler']);
+                }
+                else if (lower.includes('launch') || lower.includes('finish') || lower.includes('done')) {
+                    launchScheduler();
+                }
+                else {
+                    s3ariaAI('I can help you <strong>connect an HRMS</strong>, <strong>import employees</strong>, or <strong>build a knowledge base</strong>. What would you like? 😊');
+                    s3ariaSuggestions(['Connect BambooHR', 'Upload CSV', 'Create knowledge base', 'Skip for now']);
+                }
+            }, 1100);
+        }
+
+        function handleS3Upload(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const ext = file.name.split('.').pop().toLowerCase();
+            const sz = file.size < 1048576 ? (file.size / 1024).toFixed(1) + 'KB' : (file.size / 1048576).toFixed(1) + 'MB';
+            s3ariaFile(file.name, sz);
+            if (['csv', 'xlsx', 'xls'].includes(ext)) {
+                setTimeout(() => { employees = [...FAKE_EMP]; renderS3(); flashS3('card-employees'); s3ariaAI(`📊 Imported <strong>${employees.length} employees</strong> from <strong>${file.name}</strong>!`); }, 1500);
+            } else {
+                kbItems.push({ name: file.name, type: ext.toUpperCase(), icon: ext === 'pdf' ? '📕' : '📘' });
+                renderS3(); flashS3('card-kb');
+                s3ariaAI(`📚 Added <strong>${file.name}</strong> to Knowledge Base ✅`);
+            }
+            e.target.value = '';
+        }
+
+        function launchScheduler() {
+            document.getElementById('step3').classList.remove('visible');
+            document.getElementById('step4').classList.add('visible');
+            renderReview();
+            s4ariaAI(`Here\'s your setup summary! 📋 Review everything and click <strong>Generate My Scheduler</strong> when ready.\n\nOr tell me if you want to change anything.`);
+        }
+
+        function goBackToStep3() { document.getElementById('step4').classList.remove('visible'); document.getElementById('step3').classList.add('visible'); }
+
+        /* ── Review Render ── */
+        function renderReview() {
+            const ind = IND.find(i => i.id === selId);
+            const totalRoles = depts.reduce((a, d) => a + d.roles.length, 0);
+            const allShifts = [...new Set(depts.flatMap(d => d.shifts))];
+            const empDepts = [...new Set(employees.map(e => e.dept))];
+            document.getElementById('s4Scroll').innerHTML = `<div class="cfg-panel">
+                <div class="cfg-card"><div class="cfg-card-header"><div class="cfg-card-icon" style="background:#dbeafe">🏢</div><div><h3>Organization Overview</h3><div class="sub">Your setup at a glance</div></div></div>
+                    <div class="review-grid">
+                        <div class="rv-card"><div class="rv-label">Industry</div><div class="rv-value">${ind ? ind.e : ''} ${ind ? ind.n : 'Not set'}</div></div>
+                        <div class="rv-card"><div class="rv-label">Departments</div><div class="rv-value">${depts.length}</div><div class="rv-list">${depts.map(d => '<span class="rv-chip">' + d.name + '</span>').join('')}</div></div>
+                        <div class="rv-card"><div class="rv-label">Employees</div><div class="rv-value">${employees.length}</div><div class="rv-detail">${empDepts.length} departments covered</div></div>
+                        <div class="rv-card"><div class="rv-label">Knowledge Base</div><div class="rv-value">${kbItems.length} docs</div><div class="rv-detail">${kbItems.length ? kbItems.map(k => k.name).slice(0, 3).join(', ') : 'None added'}</div></div>
+                    </div>
+                </div>
+                <div class="cfg-card"><div class="cfg-card-header"><div class="cfg-card-icon" style="background:#fef3c7">⏰</div><div><h3>Schedule Configuration</h3><div class="sub">Hours, shifts & rules</div></div></div>
+                    <div class="review-grid">
+                        <div class="rv-card"><div class="rv-label">Working Hours</div><div class="rv-value">${depts[0]?.hours.s || '09:00'} – ${depts[0]?.hours.e || '18:00'}</div><div class="rv-detail">Default across departments</div></div>
+                        <div class="rv-card"><div class="rv-label">Active Shifts</div><div class="rv-value">${allShifts.length} types</div><div class="rv-list">${allShifts.map(s => '<span class="rv-chip">' + s + '</span>').join('')}</div></div>
+                        <div class="rv-card"><div class="rv-label">Total Roles</div><div class="rv-value">${totalRoles}</div><div class="rv-detail">Across ${depts.length} departments</div></div>
+                        <div class="rv-card"><div class="rv-label">Integrations</div><div class="rv-value">${connectedHRMS.length || 'None'}</div><div class="rv-detail">${connectedHRMS.length ? connectedHRMS.map(id => HRMS_LIST.find(h => h.id === id)?.name).join(', ') : 'Manual setup'}</div></div>
+                    </div>
+                </div>
+                ${employees.length ? `<div class="cfg-card"><div class="cfg-card-header"><div class="cfg-card-icon" style="background:#ede9fe">👥</div><div><h3>Team Preview</h3><div class="sub">${employees.length} employees ready</div></div></div>
+                    <div style="overflow-x:auto"><table class="emp-table"><thead><tr><th>Name</th><th>Role</th><th>Department</th></tr></thead><tbody>${employees.slice(0, 5).map(e => '<tr><td><span class="emp-avatar">' + e.name.split(' ').map(w => w[0]).join('') + '</span>' + e.name + '</td><td>' + e.role + '</td><td>' + e.dept + '</td></tr>').join('')}${employees.length > 5 ? '<tr><td colspan="3" style="text-align:center;color:var(--text-secondary);font-size:12px">+ ' + (employees.length - 5) + ' more employees</td></tr>' : ''}</tbody></table></div>
+                </div>`: ''}
+            </div>`;
+        }
+
+        /* ── Review Chat ── */
+        function s4ariaAI(html) { const c = document.getElementById('chatMsgs4'); const d = document.createElement('div'); d.className = 'msg ai'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble">${html}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function sendChat4() { const inp = document.getElementById('chatInp4'); const t = inp.value.trim(); if (!t) return; inp.value = ''; const c = document.getElementById('chatMsgs4'); const d = document.createElement('div'); d.className = 'msg user'; d.innerHTML = `<div class="bubble">${t}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; setTimeout(() => s4ariaAI('Got it! I\'ll apply that. Click <strong>Generate My Scheduler</strong> when you\'re ready 🚀'), 800); }
+
+        /* ── Planning Animation ── */
+        function startPlanning() {
+            document.getElementById('step4').classList.remove('visible');
+            document.getElementById('step5').classList.remove('visible');
+            const ps = document.getElementById('planningScreen');
+            ps.classList.add('active');
+            ['ps1', 'ps2', 'ps3', 'ps4'].forEach(id => { const el = document.getElementById(id); el.className = '' });
+            setTimeout(() => document.getElementById('ps1').className = 'active', 500);
+            setTimeout(() => { document.getElementById('ps1').className = 'done'; document.getElementById('ps2').className = 'active'; }, 1500);
+            setTimeout(() => { document.getElementById('ps2').className = 'done'; document.getElementById('ps3').className = 'active'; }, 2800);
+            setTimeout(() => { document.getElementById('ps3').className = 'done'; document.getElementById('ps4').className = 'active'; }, 4000);
+            setTimeout(() => { document.getElementById('ps4').className = 'done'; }, 5000);
+            setTimeout(() => { ps.classList.remove('active'); showSuggestions(); }, 5800);
+        }
+
+        /* ── Suggestions Screen ── */
+        const SCHED_OPTIONS = [
+            { id: 'weekly', icon: '📅', bg: '#dbeafe', title: 'Weekly Rotation', desc: 'Auto-rotate shifts weekly across teams. Best for balanced workload distribution.', feats: ['Auto-rotate', 'Fair distribution', 'Conflict-free'], badge: 'rec', badgeText: 'Recommended' },
+            { id: 'fixed', icon: '📌', bg: '#fef3c7', title: 'Fixed Schedule', desc: 'Assign consistent shifts to employees. Ideal for stable, predictable rosters.', feats: ['Consistent hours', 'Easy to manage', 'Employee preference'], badge: 'pop', badgeText: 'Most Popular' },
+            { id: 'demand', icon: '📊', bg: '#ede9fe', title: 'Demand-Based', desc: 'AI adjusts staffing based on peak hours and historical demand patterns.', feats: ['AI-powered', 'Peak coverage', 'Cost-efficient'], badge: '', badgeText: '' },
+            { id: 'flex', icon: '🔄', bg: '#d1fae5', title: 'Flexible / Hybrid', desc: 'Employees pick preferred shifts within guidelines. Great for modern teams.', feats: ['Self-service', 'Swap shifts', 'Work-life balance'], badge: '', badgeText: '' }
+        ];
+        let selectedSched = null;
+
+        function showSuggestions() {
+            document.getElementById('step5').classList.add('visible');
+            renderSchedCards();
+            s5ariaAI(`I\'ve generated <strong>4 scheduling strategies</strong> based on your ${IND.find(i => i.id === selId)?.n || ''} setup! 🎯\n\n<strong>Weekly Rotation</strong> is my top recommendation for your team size and shift patterns.\n\nClick a card to select it, or ask me about any option!`);
+            setTimeout(() => s5ariaSuggestions(['Tell me more about Weekly', 'Why is Fixed popular?', 'Compare Demand vs Flex', 'Just pick the best one']), 500);
+        }
+
+        function renderSchedCards() {
+            document.getElementById('s5Scroll').innerHTML = `<div class="cfg-panel">
+                <div class="cfg-card"><div class="cfg-card-header"><div class="cfg-card-icon" style="background:#dbeafe">✦</div><div><h3>Choose Your Scheduling Strategy</h3><div class="sub">Select the approach that fits your team best</div></div></div>
+                    <div class="sched-grid">${SCHED_OPTIONS.map(s => `<div class="sched-card ${selectedSched === s.id ? 'selected' : ''}" onclick="pickSched('${s.id}')">
+                        ${s.badge ? '<div class="sc-badge ' + s.badge + '">' + s.badgeText + '</div>' : ''}
+                        <div class="sc-icon" style="background:${s.bg}">${s.icon}</div>
+                        <div class="sc-title">${s.title}</div>
+                        <div class="sc-desc">${s.desc}</div>
+                        <div class="sc-features">${s.feats.map(f => '<span class="sc-feat">' + f + '</span>').join('')}</div>
+                    </div>`).join('')}</div>
+                </div>
+            </div>`;
+        }
+
+        function pickSched(id) {
+            selectedSched = id;
+            renderSchedCards();
+            const s = SCHED_OPTIONS.find(o => o.id === id);
+            document.getElementById('s5GoBtn').disabled = false;
+            document.getElementById('s5GoBtn').style.opacity = '1';
+            s5ariaAI(`Great choice! <strong>${s.title}</strong> ${s.icon} is selected.\n\n${s.desc}\n\nClick <strong>Open Scheduler</strong> to start using it!`);
+        }
+
+        function s5ariaAI(html) { const c = document.getElementById('chatMsgs5'); const d = document.createElement('div'); d.className = 'msg ai'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble">${html}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s5ariaSuggestions(arr) { const c = document.getElementById('chatMsgs5'); const d = document.createElement('div'); d.className = 'suggestions'; d.innerHTML = arr.map(s => `<button class="sug-btn" onclick="s5useSug(this,'${s}')">${s}</button>`).join(''); c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s5useSug(btn, text) { btn.parentElement.remove(); s5processInput(text); }
+        function sendChat5() { const inp = document.getElementById('chatInp5'); const t = inp.value.trim(); if (!t) return; inp.value = ''; s5processInput(t); }
+        function s5processInput(text) {
+            const c5 = document.getElementById('chatMsgs5'); const ud = document.createElement('div'); ud.className = 'msg user'; ud.innerHTML = `<div class="bubble">${text}</div>`; c5.appendChild(ud); c5.scrollTop = c5.scrollHeight;
+            const l = text.toLowerCase();
+            setTimeout(() => {
+                if (l.includes('weekly') || l.includes('rotation')) s5ariaAI('<strong>Weekly Rotation</strong> 📅 automatically cycles shifts so no one is stuck on the same pattern. It ensures fairness and prevents burnout. Best for teams of 10+ people with multiple shift types.');
+                else if (l.includes('fixed')) s5ariaAI('<strong>Fixed Schedule</strong> 📌 gives every employee the same shifts every week. It\'s the easiest to manage and employees love the predictability. Popular with small-medium teams.');
+                else if (l.includes('demand')) s5ariaAI('<strong>Demand-Based</strong> 📊 uses AI to predict busy periods and staffs accordingly. It reduces overstaffing costs by up to 30%. Best for retail, food service, and healthcare.');
+                else if (l.includes('flex') || l.includes('hybrid')) s5ariaAI('<strong>Flexible/Hybrid</strong> 🔄 lets employees bid on preferred shifts within your guidelines. Great for knowledge workers and teams that value autonomy.');
+                else if (l.includes('compare')) s5ariaAI('📊 <strong>Demand-Based</strong> is cost-efficient but requires historical data. 🔄 <strong>Flexible</strong> improves employee satisfaction but needs more oversight. For your setup, I\'d suggest <strong>Demand-Based</strong> if cost is key, or <strong>Flexible</strong> if culture matters more.');
+                else if (l.includes('best') || l.includes('pick') || l.includes('recommend')) { pickSched('weekly'); }
+                else s5ariaAI('I can explain any of the 4 options in detail! Just mention <strong>Weekly, Fixed, Demand, or Flex</strong>. 😊');
+            }, 900);
+        }
+
+        function goToScheduler() {
+            document.getElementById('loadingScreen').classList.add('active');
+            setTimeout(() => { window.location.href = 'aidesign.html?onboarded=true'; }, 4000);
+        }
+    </script>
+</body>
+
+</html>

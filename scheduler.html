@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Smart Scheduler | Reloadux</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8f9fc;
+            --white: #fff;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --border-lt: #f0f1f4;
+            --accent: #6366f1;
+            --accent-h: #5457e5;
+            --accent-bg: rgba(99, 102, 241, .06);
+            --accent-glow: rgba(99, 102, 241, .12);
+            --green: #10b981;
+            --green-bg: rgba(16, 185, 129, .08);
+            --orange: #f59e0b;
+            --orange-bg: rgba(245, 158, 11, .08);
+            --red: #ef4444;
+            --red-bg: rgba(239, 68, 68, .08);
+            --blue: #3b82f6;
+            --blue-bg: rgba(59, 130, 246, .08);
+            --purple: #8b5cf6;
+            --purple-bg: rgba(139, 92, 246, .08);
+            --pink: #ec4899;
+            --pink-bg: rgba(236, 72, 153, .08);
+            --grad: linear-gradient(135deg, #6366f1, #818cf8);
+            --r: 14px;
+            --r-sm: 10px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, .04);
+            --shadow: 0 4px 16px rgba(0, 0, 0, .05);
+            --t: .2s cubic-bezier(.4, 0, .2, 1);
+            --hdr: 52px;
+            --panel-w: 360px
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column
+        }
+
+        /* ── Header ── */
+        .hdr {
+            height: var(--hdr);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 20px;
+            flex-shrink: 0;
+            z-index: 100
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 15px;
+            text-decoration: none;
+            color: var(--text);
+            letter-spacing: -.5px;
+            white-space: nowrap
+        }
+
+        .logo span {
+            color: var(--accent);
+            font-weight: 800
+        }
+
+        .hdr-links {
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .hdr-link {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: var(--t)
+        }
+
+        .hdr-link:hover {
+            color: var(--text);
+            background: var(--bg)
+        }
+
+        .hdr-link.active {
+            color: var(--accent);
+            background: var(--accent-bg);
+            font-weight: 700
+        }
+
+        .hdr-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .hdr-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: var(--t);
+            color: var(--muted)
+        }
+
+        .hdr-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .hdr-av {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer
+        }
+
+        /* ── Toolbar Row ── */
+        .toolbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0
+        }
+
+        .tb-group {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .tb-sep {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+            margin: 0 6px
+        }
+
+        .tb-filterBtn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--white);
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: var(--t);
+            white-space: nowrap
+        }
+
+        .tb-filterBtn:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .tb-filterBtn svg {
+            width: 10px;
+            height: 10px;
+            opacity: .5
+        }
+
+        .tb-viewGroup {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden
+        }
+
+        .tb-viewBtn {
+            padding: 6px 14px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            border: none;
+            background: var(--white);
+            cursor: pointer;
+            color: var(--muted);
+            transition: var(--t)
+        }
+
+        .tb-viewBtn:hover {
+            color: var(--text)
+        }
+
+        .tb-viewBtn.active {
+            background: var(--accent);
+            color: white
+        }
+
+        .tb-dateNav {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .tb-dateNav .dn-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--t);
+            color: var(--muted)
+        }
+
+        .tb-dateNav .dn-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .tb-dateNav .dn-label {
+            font-size: 12px;
+            font-weight: 700;
+            min-width: 155px;
+            text-align: center
+        }
+
+        .tb-spacer {
+            flex: 1
+        }
+
+        .tb-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--muted);
+            transition: var(--t);
+            white-space: nowrap
+        }
+
+        .tb-action:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-bg)
+        }
+
+        .tb-action.pri {
+            background: var(--grad);
+            color: white;
+            border: none;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, .18)
+        }
+
+        .tb-action.pri:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, .25)
+        }
+
+        /* ── Body ── */
+        .body-wrap {
+            display: flex;
+            flex: 1;
+            overflow: hidden
+        }
+
+        /* ── Schedule Grid ── */
+        .sched-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden
+        }
+
+        .grid-wrap {
+            flex: 1;
+            overflow: auto;
+            padding: 0
+        }
+
+        .grid-wrap::-webkit-scrollbar {
+            width: 4px;
+            height: 4px
+        }
+
+        .grid-wrap::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px
+        }
+
+        .sched-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            min-width: 900px
+        }
+
+        .sched-table th {
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 10;
+            padding: 10px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--muted);
+            text-align: center;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .sched-table th:first-child {
+            text-align: left;
+            padding-left: 20px;
+            width: 180px
+        }
+
+        .sched-table th .th-day {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--muted)
+        }
+
+        .sched-table th .th-date {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0;
+            color: var(--text);
+            margin-top: 1px
+        }
+
+        .sched-table th.today .th-date {
+            color: var(--accent);
+            background: var(--accent-bg);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .sched-table td {
+            padding: 3px 3px;
+            vertical-align: top;
+            border-bottom: 1px solid var(--border-lt);
+            height: 68px
+        }
+
+        .sched-table td:first-child {
+            padding-left: 16px
+        }
+
+        .sched-table tr:hover td {
+            background: rgba(99, 102, 241, .015)
+        }
+
+        .emp-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 4px
+        }
+
+        .emp-av {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .emp-info .emp-name {
+            font-size: 12px;
+            font-weight: 700
+        }
+
+        .emp-info .emp-role {
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 500
+        }
+
+        /* ── Shift Blocks ── */
+        .shift-block {
+            padding: 5px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .18s ease;
+            border: 1px solid transparent;
+            position: relative;
+            line-height: 1.3
+        }
+
+        .shift-block:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .08)
+        }
+
+        .shift-block .sb-time {
+            font-size: 10px;
+            font-weight: 500;
+            opacity: .7;
+            margin-top: 1px
+        }
+
+        .shift-block .sb-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .shift-block.morning {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-color: #bfdbfe
+        }
+
+        .shift-block.day {
+            background: #ede9fe;
+            color: #6d28d9;
+            border-color: #ddd6fe
+        }
+
+        .shift-block.afternoon {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a
+        }
+
+        .shift-block.night {
+            background: #e0e7ff;
+            color: #3730a3;
+            border-color: #c7d2fe
+        }
+
+        .shift-block.off {
+            background: var(--bg);
+            color: var(--muted);
+            border: 1px dashed var(--border);
+            font-style: italic;
+            text-align: center;
+            font-size: 10px
+        }
+
+        /* ── Legend Bar ── */
+        .legend-bar {
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            flex-wrap: wrap
+        }
+
+        .legend-section {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .legend-section .leg-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--muted);
+            margin-right: 2px
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--t);
+            border: 1px solid transparent
+        }
+
+        .legend-item:hover {
+            background: var(--bg);
+            border-color: var(--border)
+        }
+
+        .legend-item.active {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+            color: var(--accent)
+        }
+
+        .leg-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .leg-count {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--muted);
+            margin-left: 1px
+        }
+
+        .legend-sep {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+            margin: 0 4px
+        }
+
+        /* ── Right Panel (Chat + Shift Details) ── */
+        .right-panel {
+            width: var(--panel-w);
+            background: var(--white);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden
+        }
+
+        /* ── Chat View ── */
+        .chat-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform .3s ease
+        }
+
+        .right-panel.shift-open .chat-view {
+            transform: translateX(-100%);
+            position: absolute;
+            inset: 0;
+            pointer-events: none
+        }
+
+        /* ── Shift Detail View ── */
+        .shift-view {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform .3s ease;
+            background: var(--white);
+            z-index: 5
+        }
+
+        .right-panel.shift-open .shift-view {
+            transform: translateX(0)
+        }
+
+        .sv-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px
+        }
+
+        .sv-back {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: none;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            transition: var(--t);
+            flex-shrink: 0;
+            margin-top: 2px
+        }
+
+        .sv-back:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .sv-title {
+            font-size: 15px;
+            font-weight: 800
+        }
+
+        .sv-sub {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .sv-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .sv-body::-webkit-scrollbar {
+            width: 3px
+        }
+
+        .sv-body::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px
+        }
+
+        .sv-section {
+            display: flex;
+            flex-direction: column;
+            gap: 5px
+        }
+
+        .sv-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--muted)
+        }
+
+        .sv-badge {
+            display: inline-flex;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700
+        }
+
+        .sv-row {
+            display: flex;
+            gap: 8px
+        }
+
+        .sv-card {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: var(--r-sm);
+            border: 1px solid var(--border-lt)
+        }
+
+        .sv-card .sv-card-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--muted)
+        }
+
+        .sv-card .sv-card-val {
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 3px;
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .sv-card .sv-card-big {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 2px
+        }
+
+        .sv-actions {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 6px
+        }
+
+        .sv-btn {
+            flex: 1;
+            padding: 7px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            transition: var(--t);
+            text-align: center
+        }
+
+        .sv-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent)
+        }
+
+        .sv-btn.pri {
+            background: var(--grad);
+            color: white;
+            border: none
+        }
+
+        /* ── Chat Components ── */
+        .cp-hdr {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .cp-av {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: white;
+            box-shadow: 0 3px 10px rgba(99, 102, 241, .25)
+        }
+
+        .cp-nm {
+            font-size: 12px;
+            font-weight: 800
+        }
+
+        .cp-st {
+            font-size: 9px;
+            color: var(--green);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 3px
+        }
+
+        .cp-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--green)
+        }
+
+        .cp-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .cp-tab {
+            flex: 1;
+            padding: 7px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--t);
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        .cp-tab:hover {
+            color: var(--accent)
+        }
+
+        .cp-tab.active {
+            color: var(--accent);
+            border-color: var(--accent)
+        }
+
+        .cp-msgs {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #fafafd
+        }
+
+        .cp-msgs::-webkit-scrollbar {
+            width: 3px
+        }
+
+        .cp-msgs::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px
+        }
+
+        .msg {
+            display: flex;
+            gap: 7px
+        }
+
+        .msg.ai {
+            align-self: flex-start;
+            max-width: 92%
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            max-width: 85%;
+            flex-direction: row-reverse
+        }
+
+        .msg-av {
+            width: 20px;
+            height: 20px;
+            border-radius: 7px;
+            background: var(--grad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            color: white;
+            flex-shrink: 0;
+            margin-top: 2px
+        }
+
+        .bubble {
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            line-height: 1.5;
+            font-weight: 500
+        }
+
+        .msg.ai .bubble {
+            background: white;
+            border: 1px solid var(--border-lt);
+            border-top-left-radius: 4px
+        }
+
+        .msg.user .bubble {
+            background: var(--grad);
+            color: white;
+            border-top-right-radius: 4px
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px
+        }
+
+        .sug-btn {
+            padding: 4px 9px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 10px;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--muted);
+            cursor: pointer;
+            transition: var(--t)
+        }
+
+        .sug-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent)
+        }
+
+        .cp-input {
+            padding: 10px 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 6px
+        }
+
+        .cp-input input {
+            flex: 1;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 500;
+            outline: none;
+            transition: var(--t)
+        }
+
+        .cp-input input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow)
+        }
+
+        .cp-input button {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--grad);
+            border: none;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .stat-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px
+        }
+
+        .stat-card {
+            flex: 1;
+            padding: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border-lt);
+            border-radius: 8px;
+            text-align: center
+        }
+
+        .stat-card .stv {
+            font-size: 16px;
+            font-weight: 800
+        }
+
+        .stat-card .stl {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .insight-card {
+            padding: 8px 10px;
+            border-radius: 9px;
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1.5;
+            display: flex;
+            gap: 7px;
+            align-items: flex-start
+        }
+
+        .insight-card .ic-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+            margin-top: 1px
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .fade-in {
+            animation: fadeUp .3s ease
+        }
+
+        /* ── Gap Highlight ── */
+        @keyframes gapPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, .3)
+            }
+
+            50% {
+                box-shadow: 0 0 0 4px rgba(239, 68, 68, .15)
+            }
+        }
+
+        .shift-block.gap-highlight {
+            border: 2px solid var(--red) !important;
+            animation: gapPulse 1.5s infinite;
+            position: relative
+        }
+
+        .shift-block.gap-highlight::after {
+            content: 'GAP';
+            position: absolute;
+            top: -8px;
+            right: 4px;
+            font-size: 7px;
+            font-weight: 800;
+            background: var(--red);
+            color: white;
+            padding: 1px 4px;
+            border-radius: 4px;
+            letter-spacing: .5px
+        }
+
+        /* ── Swap Selection ── */
+        @keyframes swapRing {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 2px rgba(99, 102, 241, .4)
+            }
+
+            50% {
+                box-shadow: 0 0 0 4px rgba(99, 102, 241, .2)
+            }
+        }
+
+        .shift-block.swap-selected {
+            border: 2px solid var(--accent) !important;
+            animation: swapRing 1.2s infinite
+        }
+
+        .shift-block.swap-target {
+            border: 2px dashed var(--accent) !important;
+            opacity: .85
+        }
+
+        /* ── Suggestion Overlay ── */
+        .shift-block.suggested {
+            border: 2px solid var(--green) !important;
+            background: var(--green-bg) !important;
+            color: var(--green) !important
+        }
+
+        .shift-block.suggested::after {
+            content: 'SUGGESTED';
+            position: absolute;
+            top: -8px;
+            right: 4px;
+            font-size: 7px;
+            font-weight: 800;
+            background: var(--green);
+            color: white;
+            padding: 1px 4px;
+            border-radius: 4px;
+            letter-spacing: .5px
+        }
+
+        /* ── Shift Type Filter Dim ── */
+        .shift-block.dimmed {
+            opacity: .2;
+            pointer-events: none;
+            transform: none !important;
+            box-shadow: none !important
+        }
+
+        /* ── Day View (hide non-active columns) ── */
+        .sched-table.day-view th:not(.day-active):not(:first-child),
+        .sched-table.day-view td:not(.day-active):not(:first-child) {
+            display: none
+        }
+
+        .sched-table.day-view th.day-active,
+        .sched-table.day-view td.day-active {
+            width: 100%
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ── Header ── -->
+    <div class="hdr">
+        <a href="aidesign.html" class="logo">reload<span>ux</span></a>
+        <div class="hdr-links">
+            <a class="hdr-link" href="aidesign.html">ai design</a>
+            <a class="hdr-link active" href="#">scheduler</a>
+        </div>
+        <div class="hdr-right">
+            <button class="hdr-icon" title="Notifications">🔔</button>
+            <button class="hdr-icon" title="Settings">⚙️</button>
+            <div class="hdr-av">MS</div>
+        </div>
+    </div>
+
+    <!-- ── Toolbar ── -->
+    <div class="toolbar">
+        <div class="tb-group">
+            <button class="tb-filterBtn">🔍 Search</button>
+            <button class="tb-filterBtn">Shifts <svg viewBox="0 0 10 10">
+                    <path d="M2 4l3 3 3-3" stroke="currentColor" fill="none" stroke-width="1.5" />
+                </svg></button>
+            <button class="tb-filterBtn">Status <svg viewBox="0 0 10 10">
+                    <path d="M2 4l3 3 3-3" stroke="currentColor" fill="none" stroke-width="1.5" />
+                </svg></button>
+        </div>
+        <div class="tb-sep"></div>
+        <div class="tb-dateNav">
+            <button class="dn-btn" onclick="changeWeek(-1)">‹</button>
+            <div class="dn-label" id="weekLabel">Feb 24 – Mar 2, 2026</div>
+            <button class="dn-btn" onclick="changeWeek(1)">›</button>
+        </div>
+        <div class="tb-sep"></div>
+        <div class="tb-viewGroup">
+            <button class="tb-viewBtn active" onclick="setView('day',this)">Day</button>
+            <button class="tb-viewBtn" onclick="setView('week',this)">Week</button>
+            <button class="tb-viewBtn" onclick="setView('month',this)">Month</button>
+        </div>
+        <div class="tb-spacer"></div>
+        <button class="tb-action" onclick="chatCmd('Show coverage gaps')">⚠️ Gaps</button>
+        <button class="tb-action" onclick="chatCmd('Overtime report')">📊 Overtime</button>
+        <button class="tb-action" onclick="chatCmd('Who is available?')">👤 Available</button>
+        <button class="tb-action" onclick="chatCmd('Export schedule')">📥 Export</button>
+        <div class="tb-sep"></div>
+        <button class="tb-action" onclick="chatCmd('Auto assign shifts')">✦ Auto Assign</button>
+        <button class="tb-action pri" onclick="openAddShift()">+ Create</button>
+    </div>
+
+    <div class="body-wrap">
+        <!-- ── Schedule Grid ── -->
+        <div class="sched-area">
+            <div class="grid-wrap">
+                <table class="sched-table" id="schedTable">
+                    <thead id="schedHead"></thead>
+                    <tbody id="schedBody"></tbody>
+                </table>
+            </div>
+            <!-- ── Legend Bar ── -->
+            <div class="legend-bar">
+                <div class="legend-section">
+                    <span class="leg-label">Departments</span>
+                    <div class="legend-item active" onclick="filterDept('all',this)">
+                        <div class="leg-dot" style="background:var(--accent)"></div>All<span class="leg-count">8</span>
+                    </div>
+                    <div class="legend-item" onclick="filterDept('eng',this)">
+                        <div class="leg-dot" style="background:#3b82f6"></div>Engineering<span
+                            class="leg-count">4</span>
+                    </div>
+                    <div class="legend-item" onclick="filterDept('product',this)">
+                        <div class="leg-dot" style="background:#8b5cf6"></div>Product<span class="leg-count">1</span>
+                    </div>
+                    <div class="legend-item" onclick="filterDept('design',this)">
+                        <div class="leg-dot" style="background:#ec4899"></div>Design<span class="leg-count">1</span>
+                    </div>
+                    <div class="legend-item" onclick="filterDept('support',this)">
+                        <div class="leg-dot" style="background:#f59e0b"></div>Support<span class="leg-count">1</span>
+                    </div>
+                    <div class="legend-item" onclick="filterDept('mkt',this)">
+                        <div class="leg-dot" style="background:#10b981"></div>Marketing<span class="leg-count">1</span>
+                    </div>
+                </div>
+                <div class="legend-sep"></div>
+                <div class="legend-section" id="shiftLegend">
+                    <span class="leg-label">Shifts</span>
+                    <div class="legend-item active" onclick="filterShiftType('all',this)">
+                        <div class="leg-dot" style="background:var(--accent)"></div>All
+                    </div>
+                    <div class="legend-item" onclick="filterShiftType('morning',this)">
+                        <div class="leg-dot" style="background:#3b82f6"></div>Morning
+                    </div>
+                    <div class="legend-item" onclick="filterShiftType('day',this)">
+                        <div class="leg-dot" style="background:#8b5cf6"></div>Day
+                    </div>
+                    <div class="legend-item" onclick="filterShiftType('afternoon',this)">
+                        <div class="leg-dot" style="background:#f59e0b"></div>Afternoon
+                    </div>
+                    <div class="legend-item" onclick="filterShiftType('night',this)">
+                        <div class="leg-dot" style="background:#3730a3"></div>Night
+                    </div>
+                </div>
+                <div class="legend-sep"></div>
+                <div class="legend-section">
+                    <span class="leg-label">Status</span>
+                    <div class="legend-item">
+                        <div class="leg-dot" style="background:var(--green)"></div>Confirmed
+                    </div>
+                    <div class="legend-item">
+                        <div class="leg-dot" style="background:var(--orange)"></div>Pending
+                    </div>
+                    <div class="legend-item">
+                        <div class="leg-dot" style="background:var(--muted)"></div>Off
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Right Panel (holds both Chat and Shift Detail) ── -->
+        <div class="right-panel" id="rightPanel">
+
+            <!-- Chat View -->
+            <div class="chat-view" id="chatView">
+                <div class="cp-hdr">
+                    <div class="cp-av">✦</div>
+                    <div>
+                        <div class="cp-nm">Aria Insights</div>
+                        <div class="cp-st"><span class="cp-dot"></span> Online</div>
+                    </div>
+                </div>
+                <div class="cp-tabs">
+                    <div class="cp-tab active" onclick="switchTab(this,'chat')">Chat</div>
+                    <div class="cp-tab" onclick="switchTab(this,'insights')">Insights</div>
+                    <div class="cp-tab" onclick="switchTab(this,'reports')">Reports</div>
+                </div>
+                <div class="cp-msgs" id="cpMsgs"></div>
+                <div class="cp-input">
+                    <input id="cpInp" placeholder="Ask about schedule, reports…"
+                        onkeydown="if(event.key==='Enter')sendCP()">
+                    <button onclick="sendCP()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13" />
+                            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                        </svg></button>
+                </div>
+            </div>
+
+            <!-- Shift Detail View (slides in, replaces chat) -->
+            <div class="shift-view" id="shiftView">
+                <div class="sv-header">
+                    <button class="sv-back" onclick="closeShift()">←</button>
+                    <div>
+                        <div class="sv-title" id="svTitle">Shift Details</div>
+                        <div class="sv-sub" id="svSub"></div>
+                    </div>
+                </div>
+                <div class="sv-body" id="svBody"></div>
+                <div class="sv-actions">
+                    <button class="sv-btn" onclick="closeShift();chatCmd('Swap this shift')">🔄 Swap</button>
+                    <button class="sv-btn" onclick="closeShift();chatCmd('Find coverage')">👤 Cover</button>
+                    <button class="sv-btn pri" onclick="closeShift()">Done</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const EMPS = [
+            { id: 1, name: 'Sarah Chen', role: 'Senior Developer', dept: 'eng', color: '#3b82f6' },
+            { id: 2, name: 'Alex Johnson', role: 'DevOps Engineer', dept: 'eng', color: '#3b82f6' },
+            { id: 3, name: 'Tom Davis', role: 'Frontend Dev', dept: 'eng', color: '#3b82f6' },
+            { id: 4, name: 'Emily Brown', role: 'QA Engineer', dept: 'eng', color: '#3b82f6' },
+            { id: 5, name: 'James Wilson', role: 'Product Manager', dept: 'product', color: '#8b5cf6' },
+            { id: 6, name: 'Maria Garcia', role: 'UX Designer', dept: 'design', color: '#ec4899' },
+            { id: 7, name: 'David Kim', role: 'Support Lead', dept: 'support', color: '#f59e0b' },
+            { id: 8, name: 'Lisa Wang', role: 'Marketing Lead', dept: 'mkt', color: '#10b981' }
+        ];
+        const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const DATES = ['Feb 24', 'Feb 25', 'Feb 26', 'Feb 27', 'Feb 28', 'Mar 1', 'Mar 2'];
+        const STYPES = { morning: { label: 'Morning', time: '6:00a – 2:00p', cls: 'morning' }, day: { label: 'Day', time: '9:00a – 5:00p', cls: 'day' }, afternoon: { label: 'Afternoon', time: '2:00p – 10:00p', cls: 'afternoon' }, night: { label: 'Night', time: '10:00p – 6:00a', cls: 'night' }, off: { label: 'Off', time: '', cls: 'off' } };
+        const STATUSES = ['confirmed', 'confirmed', 'confirmed', 'pending', 'confirmed'];
+        const DEPT_NAMES = { eng: 'Engineering', product: 'Product', design: 'Design', support: 'Support', mkt: 'Marketing' };
+
+        const SHIFTS = {};
+        EMPS.forEach(e => {
+            SHIFTS[e.id] = [];
+            for (let d = 0; d < 7; d++) {
+                if (d >= 5 && Math.random() > .3) { SHIFTS[e.id].push({ type: 'off', note: '', status: 'off' }); continue; }
+                const types = ['morning', 'day', 'day', 'day', 'afternoon'];
+                if (e.dept === 'support') types.push('night', 'afternoon');
+                const t = types[Math.floor(Math.random() * types.length)];
+                const st = STATUSES[Math.floor(Math.random() * STATUSES.length)];
+                SHIFTS[e.id].push({ type: t, note: Math.random() > .8 ? 'WFH' : '', status: st });
+            }
+        });
+
+        let currentDept = 'all', currentShiftFilter = 'all', currentView = 'week', activeDay = 0;
+
+        /* ── Render Grid ── */
+        function renderGrid() {
+            const emps = currentDept === 'all' ? EMPS : EMPS.filter(e => e.dept === currentDept);
+            const tbl = document.getElementById('schedTable');
+            tbl.className = 'sched-table' + (currentView === 'day' ? ' day-view' : '');
+            document.getElementById('schedHead').innerHTML = `<tr><th>Employee</th>${DAYS.map((d, i) => `<th class="${i === 0 ? 'today' : ''} ${currentView === 'day' && i === activeDay ? 'day-active' : ''}"><div class="th-day">${d}</div><div class="th-date">${DATES[i].split(' ')[1]}</div></th>`).join('')}</tr>`;
+            document.getElementById('schedBody').innerHTML = emps.map(e => {
+                const init = e.name.split(' ').map(w => w[0]).join('');
+                const cells = SHIFTS[e.id].map((s, di) => {
+                    const st = STYPES[s.type];
+                    const dotColor = s.status === 'confirmed' ? 'var(--green)' : s.status === 'pending' ? 'var(--orange)' : 'var(--muted)';
+                    const dimCls = currentShiftFilter !== 'all' && s.type !== currentShiftFilter && s.type !== 'off' ? ' dimmed' : '';
+                    const dayCls = currentView === 'day' && di === activeDay ? ' day-active' : '';
+                    if (s.type === 'off') return `<td class="${dayCls}"><div class="shift-block off${dimCls}" data-emp="${e.id}" data-day="${di}" onclick="openShift(${e.id},${di})">Off</div></td>`;
+                    return `<td class="${dayCls}"><div class="shift-block ${st.cls}${dimCls}" data-emp="${e.id}" data-day="${di}" onclick="openShift(${e.id},${di})">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span>${st.label}</span><span class="sb-dot" style="background:${dotColor}"></span></div>
+        <div class="sb-time">${st.time}${s.note ? ' · ' + s.note : ''}</div>
+      </div></td>`;
+                }).join('');
+                return `<tr><td><div class="emp-cell"><div class="emp-av" style="background:${e.color}12;color:${e.color}">${init}</div><div class="emp-info"><div class="emp-name">${e.name}</div><div class="emp-role">${e.role}</div></div></div></td>${cells}</tr>`;
+            }).join('');
+        }
+
+        /* ── Filters ── */
+        function filterDept(dept, el) {
+            currentDept = dept;
+            document.querySelectorAll('.legend-section:first-child .legend-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            renderGrid();
+        }
+        function filterShiftType(type, el) {
+            currentShiftFilter = type;
+            document.querySelectorAll('#shiftLegend .legend-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            renderGrid();
+        }
+
+        /* ── View Toggles ── */
+        function setView(v, el) {
+            currentView = v;
+            document.querySelectorAll('.tb-viewBtn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            if (v === 'day') {
+                document.getElementById('weekLabel').textContent = DAYS[activeDay] + ', ' + DATES[activeDay] + ', 2026';
+            } else {
+                document.getElementById('weekLabel').textContent = 'Feb 24 – Mar 2, 2026';
+            }
+            renderGrid();
+        }
+        function changeWeek(dir) {
+            if (currentView === 'day') {
+                activeDay = Math.max(0, Math.min(6, activeDay + dir));
+                document.getElementById('weekLabel').textContent = DAYS[activeDay] + ', ' + DATES[activeDay] + ', 2026';
+                renderGrid();
+            }
+        }
+        function openAddShift() { chatCmd('Add a new shift'); }
+
+        /* ── Gap Detection & Highlighting ── */
+        function findGaps() {
+            const gaps = [];
+            EMPS.forEach(e => {
+                SHIFTS[e.id].forEach((s, di) => {
+                    if (s.type === 'off' && di < 5) gaps.push({ empId: e.id, day: di, emp: e });
+                });
+            });
+            return gaps;
+        }
+        function highlightGaps() {
+            clearHighlights();
+            const gaps = findGaps();
+            gaps.forEach(g => {
+                const block = document.querySelector(`.shift-block[data-emp="${g.empId}"][data-day="${g.day}"]`);
+                if (block) block.classList.add('gap-highlight');
+            });
+            return gaps;
+        }
+        function clearHighlights() {
+            document.querySelectorAll('.shift-block').forEach(b => {
+                b.classList.remove('gap-highlight', 'swap-selected', 'swap-target', 'suggested');
+            });
+        }
+        function suggestAllocations(gaps) {
+            clearHighlights();
+            const available = EMPS.filter(e => !gaps.some(g => g.empId === e.id));
+            gaps.forEach(g => {
+                const block = document.querySelector(`.shift-block[data-emp="${g.empId}"][data-day="${g.day}"]`);
+                if (block) {
+                    block.classList.add('suggested');
+                    block.textContent = '→ ' + (available[Math.floor(Math.random() * available.length)]?.name?.split(' ')[0] || 'TBD');
+                }
+            });
+        }
+        function autoFillGaps() {
+            const gaps = findGaps().slice(0, 3);
+            const fills = [];
+            gaps.forEach(g => {
+                SHIFTS[g.empId][g.day] = { type: 'day', note: 'Auto-filled', status: 'pending' };
+                fills.push(`<strong>${DAYS[g.day]}</strong> → ${g.emp.name}`);
+            });
+            renderGrid();
+            return fills;
+        }
+
+        /* ── Shift Swap ── */
+        let swapState = null;
+        function initiateSwap(empId1, day1, empId2, day2) {
+            const tmp = { ...SHIFTS[empId1][day1] };
+            SHIFTS[empId1][day1] = { ...SHIFTS[empId2][day2] };
+            SHIFTS[empId2][day2] = tmp;
+            renderGrid();
+        }
+
+        /* ── Shift Detail (right panel) ── */
+        function openShift(empId, dayIdx) {
+            const e = EMPS.find(x => x.id === empId);
+            const s = SHIFTS[empId][dayIdx];
+            const st = STYPES[s.type];
+            document.getElementById('svTitle').textContent = e.name;
+            document.getElementById('svSub').textContent = `${DAYS[dayIdx]}, ${DATES[dayIdx]} • ${e.role}`;
+            const isOff = s.type === 'off';
+            document.getElementById('svBody').innerHTML = `
+    <div class="sv-section fade-in"><div class="sv-label">Shift Type</div><div class="sv-badge ${st.cls}" style="padding:5px 12px">${st.label}${st.time ? ' · ' + st.time : ''}</div></div>
+    <div class="sv-row fade-in">
+      <div class="sv-card"><div class="sv-card-label">Department</div><div class="sv-card-val"><span class="leg-dot" style="background:${e.color};width:6px;height:6px"></span>${DEPT_NAMES[e.dept]}</div></div>
+      <div class="sv-card"><div class="sv-card-label">Status</div><div class="sv-card-val" style="color:${isOff ? 'var(--muted)' : s.status === 'confirmed' ? 'var(--green)' : 'var(--orange)'}">${isOff ? 'Day Off' : s.status === 'confirmed' ? 'Confirmed ✓' : 'Pending ⏳'}</div></div>
+    </div>
+    ${!isOff ? `<div class="sv-section fade-in"><div class="sv-label">Notes</div><div style="font-size:12px;font-weight:500;color:var(--muted)">${s.note || 'No notes added'}</div></div>
+    <div class="sv-section fade-in"><div class="sv-label">Breaks</div>
+      <div class="sv-row"><div class="sv-card"><div class="sv-card-label">Break 1</div><div class="sv-card-val">12:00 – 12:30</div></div><div class="sv-card"><div class="sv-card-label">Break 2</div><div class="sv-card-val">15:00 – 15:15</div></div></div>
+    </div>
+    <div class="sv-section fade-in"><div class="sv-label">Weekly Hours</div>
+      <div class="sv-row"><div class="sv-card"><div class="sv-card-big" style="color:var(--accent)">${Math.floor(Math.random() * 8 + 32)}h</div><div style="font-size:9px;color:var(--muted);margin-top:2px">Scheduled</div></div><div class="sv-card"><div class="sv-card-big" style="color:var(--green)">0h</div><div style="font-size:9px;color:var(--muted);margin-top:2px">Overtime</div></div></div>
+    </div>` : '<div class="sv-section fade-in" style="padding:20px;text-align:center;color:var(--muted);font-size:12px">Scheduled day off.<br><br><button class="sv-btn" onclick="closeShift();chatCmd(\'Assign shift to ' + e.name + ' on ' + DAYS[dayIdx] + '\')">+ Assign Shift</button></div>'}
+  `;
+            document.getElementById('rightPanel').classList.add('shift-open');
+        }
+        function closeShift() { document.getElementById('rightPanel').classList.remove('shift-open'); }
+
+        /* ── Chat Helpers ── */
+        function cpAI(html) { const c = document.getElementById('cpMsgs'); const d = document.createElement('div'); d.className = 'msg ai fade-in'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble">${html}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function cpUser(text) { const c = document.getElementById('cpMsgs'); const d = document.createElement('div'); d.className = 'msg user fade-in'; d.innerHTML = `<div class="bubble">${text}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function cpSuggestions(arr) { const c = document.getElementById('cpMsgs'); const d = document.createElement('div'); d.className = 'suggestions fade-in'; d.innerHTML = arr.map(s => `<button class="sug-btn" onclick="this.parentElement.remove();chatCmd('${s}')">${s}</button>`).join(''); c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function cpInsight(icon, html, color) { const c = document.getElementById('cpMsgs'); const d = document.createElement('div'); d.className = 'insight-card fade-in'; d.style.cssText = `background:${color}`; d.innerHTML = `<span class="ic-icon">${icon}</span><span>${html}</span>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function cpStats(stats) { const c = document.getElementById('cpMsgs'); const d = document.createElement('div'); d.className = 'stat-row fade-in'; d.innerHTML = stats.map(s => `<div class="stat-card"><div class="stv" style="color:${s.c || 'var(--text)'}">${s.v}</div><div class="stl">${s.l}</div></div>`).join(''); c.appendChild(d); c.scrollTop = c.scrollHeight; }
+
+        function switchTab(el, tab) {
+            document.querySelectorAll('.cp-tab').forEach(t => t.classList.remove('active')); el.classList.add('active');
+            document.getElementById('cpMsgs').innerHTML = '';
+            if (tab === 'chat') { cpAI('How can I help with your schedule? Ask about coverage, reports, or shift changes! 😊'); cpSuggestions(['Coverage gaps', 'Weekly summary', 'Overtime alerts', 'Who\'s off today?']); }
+            else if (tab === 'insights') {
+                cpAI('<strong>Schedule Insights</strong> — This Week');
+                cpStats([{ v: '8', l: 'Employees', c: 'var(--accent)' }, { v: '40', l: 'Total Shifts', c: 'var(--green)' }, { v: String(findGaps().length), l: 'Open Gaps', c: 'var(--orange)' }]);
+                cpInsight('⚠️', '<strong>Coverage gap:</strong> Support has no Night shift on Wednesday.', 'var(--orange-bg)');
+                cpInsight('✅', '<strong>Engineering</strong> fully staffed all week. No conflicts.', 'var(--green-bg)');
+                cpInsight('📊', '<strong>Overtime risk:</strong> Sarah Chen at 38h — close to 40h limit.', 'var(--blue-bg)');
+                cpInsight('💡', '<strong>Tip:</strong> Add Morning shift for Marketing on Friday.', 'var(--accent-bg)');
+            }
+            else if (tab === 'reports') {
+                cpAI('<strong>Available Reports</strong>');
+                cpSuggestions(['Weekly coverage', 'Overtime summary', 'Dept utilization', 'Shift distribution', 'Export CSV', 'Cost analysis']);
+                cpInsight('📋', 'Click any report or ask for a custom report.', 'var(--bg)');
+            }
+        }
+
+        function sendCP() { const inp = document.getElementById('cpInp'); const t = inp.value.trim(); if (!t) return; inp.value = ''; closeShift(); chatCmd(t); }
+
+        function chatCmd(text) {
+            closeShift();
+            cpUser(text);
+            const l = text.toLowerCase();
+            setTimeout(() => {
+                if (l.includes('coverage') || l.includes('gap')) {
+                    const gaps = highlightGaps();
+                    cpAI(`Found <strong>${gaps.length} coverage gaps</strong> this week — highlighted on the calendar:`);
+                    gaps.slice(0, 4).forEach(g => cpInsight('⚠️', `<strong>${DAYS[g.day]}</strong> — ${g.emp.name} (${DEPT_NAMES[g.emp.dept]}) has no shift.`, 'var(--orange-bg)'));
+                    cpAI('Want me to suggest employees to fill these?');
+                    cpSuggestions(['Auto-fill gaps', 'Suggest allocations', 'Clear highlights']);
+                }
+                else if (l.includes('suggest') && l.includes('alloc')) {
+                    const gaps = findGaps();
+                    suggestAllocations(gaps);
+                    cpAI('📋 Suggested allocations shown on the calendar (green). Review and confirm:');
+                    cpSuggestions(['Confirm all', 'Auto-fill gaps', 'Clear highlights']);
+                }
+                else if (l.includes('clear') && l.includes('highlight')) {
+                    clearHighlights(); renderGrid();
+                    cpAI('✅ Highlights cleared.');
+                }
+                else if (l.includes('auto') && (l.includes('fill') || l.includes('schedule') || l.includes('assign'))) {
+                    cpAI('🤖 Auto-assigning…');
+                    setTimeout(() => {
+                        const fills = autoFillGaps();
+                        if (fills.length) {
+                            cpAI(`Done! Filled <strong>${fills.length} gaps</strong>:<br>` + fills.map(f => '• ' + f).join('<br>') + '<br><br>All marked as Pending ⏳');
+                        } else { cpAI('No gaps found — schedule is fully covered! ✅'); }
+                        cpSuggestions(['Looks good!', 'Show coverage gaps', 'Undo']);
+                    }, 1200);
+                }
+                else if (l.includes('swap') && l.includes('sarah') && l.includes('tom')) {
+                    const day = l.includes('tue') ? 1 : l.includes('wed') ? 2 : 0;
+                    initiateSwap(1, day, 3, day);
+                    cpAI(`🔄 Swapped <strong>Sarah Chen</strong> ↔ <strong>Tom Davis</strong> on <strong>${DAYS[day]}</strong>. Calendar updated!`);
+                    cpSuggestions(['View updated', 'Undo swap', 'More swaps']);
+                }
+                else if (l.includes('swap')) {
+                    cpAI('🔄 To swap shifts, tell me two employees and the day. Example: "Swap Sarah & Tom Tue"');
+                    cpSuggestions(['Swap Sarah & Tom Tue', 'Swap Alex & Emily Wed', 'Auto-suggest swaps']);
+                }
+                else if (l.includes('overtime')) {
+                    cpAI('<strong>Overtime Report</strong> — Week of Feb 24');
+                    cpStats([{ v: '1', l: 'At Risk', c: 'var(--orange)' }, { v: '0', l: 'Over 40h', c: 'var(--green)' }, { v: '38h', l: 'Highest', c: 'var(--accent)' }]);
+                    cpInsight('⚠️', '<strong>Sarah Chen</strong> at 38h. More shifts may trigger overtime.', 'var(--orange-bg)');
+                    cpAI('All others within normal limits ✅');
+                }
+                else if (l.includes('available') || (l.includes('who') && !l.includes('swap'))) {
+                    cpAI('Checking availability for <strong>Monday</strong>:');
+                    cpInsight('✅', '<strong>Tom Davis</strong> — Available after 5pm', 'var(--green-bg)');
+                    cpInsight('✅', '<strong>Lisa Wang</strong> — Available afternoon/night', 'var(--green-bg)');
+                    cpInsight('❌', '<strong>David Kim</strong> — On shift until 5pm', 'var(--red-bg)');
+                    cpSuggestions(['Assign Tom to Night', 'Send availability request']);
+                }
+                else if (l.includes('summary') || l.includes('weekly')) {
+                    cpAI('<strong>Weekly Summary</strong>');
+                    cpStats([{ v: '40', l: 'Shifts', c: 'var(--accent)' }, { v: '295h', l: 'Hours', c: 'var(--green)' }, { v: '97%', l: 'Coverage', c: 'var(--green)' }]);
+                    cpInsight('📊', '<strong>By dept:</strong> Engineering 16, Product 5, Design 5, Support 7, Marketing 5', 'var(--blue-bg)');
+                    cpInsight('✅', 'No overtime violations this week.', 'var(--green-bg)');
+                }
+                else if (l.includes('export')) { cpAI('📥 Exported <strong>schedule_feb24_mar2.csv</strong>. Download starting…'); }
+                else if (l.includes('add') && l.includes('shift')) { cpAI('To add a shift, specify:<br>• <strong>Employee</strong><br>• <strong>Day</strong><br>• <strong>Shift type</strong>'); cpSuggestions(['Add Morning for Lisa on Wed', 'Add Night for Tom on Sat', 'Auto-schedule gaps']); }
+                else if (l.includes('undo')) { renderGrid(); cpAI('↩️ Undone. Calendar restored.'); }
+                else if (l.includes('confirm')) { clearHighlights(); renderGrid(); cpAI('✅ All changes confirmed and saved!'); }
+                else if (l.includes('cost')) {
+                    cpAI('<strong>Cost Analysis</strong> — This Week');
+                    cpStats([{ v: '$12.4K', l: 'Labor', c: 'var(--accent)' }, { v: '$0', l: 'Overtime', c: 'var(--green)' }, { v: '-3%', l: 'vs Last Wk', c: 'var(--green)' }]);
+                    cpInsight('💰', 'Within budget. Projected monthly: $49.6K', 'var(--green-bg)');
+                }
+                else { cpAI('I can help with:<br>• 📊 Reports — coverage, overtime, costs<br>• 🔄 Shift changes — swap, add, remove<br>• 👤 Availability — who\'s free?<br>• ⚠️ Alerts — gaps, conflicts'); cpSuggestions(['Coverage gaps', 'Weekly summary', 'Overtime', 'Cost analysis']); }
+            }, 600);
+        }
+
+        // Init
+        renderGrid();
+        switchTab(document.querySelector('.cp-tab'), 'chat');
+    </script>
+</body>
+
+</html>

@@ -115,6 +115,10 @@ function buildCard(item, type) {
           ${linkLabel}
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
+        ${item.id === 'smart-scheduler' ? `
+        <a href="scheduler-onboarding.html" class="aid-card__btn-primary" style="display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 20px; background: #0ea5e9; color: white; border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 13px; transition: 0.2s;">
+          Get Started →
+        </a>` : ''}
       </div>
     </div>`;
 }

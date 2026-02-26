@@ -1,0 +1,25 @@
+{
+  "name": "reloadai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "aidesign-data.js",
+  "scripts": {
+    "dev": "live-server --port=3000 --no-browser",
+    "start": "live-server --port=3000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iahmadullah/reloadAI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iahmadullah/reloadAI/issues"
+  },
+  "homepage": "https://github.com/iahmadullah/reloadAI#readme",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

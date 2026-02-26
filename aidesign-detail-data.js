@@ -599,6 +599,16 @@ const DETAIL_DATA = {
         considerations: 'Provide extremely clear explanations for every flag — compliance is high-stakes. Include specific regulatory references and citations. Support human override with documented rationale. Maintain complete audit trails for all reviews and decisions.',
         related: ['Bias Indicators', 'Explainability Cards', 'Show Citations', 'Confidence Indicators']
     },
+
+    /* ─── MODULES ─── */
+    'smart-scheduler': {
+        cat: 'Scheduling', color: '#0ea5e9', complexity: 'High', bestFor: 'Enterprise teams, shift-based orgs, multi-timezone operations',
+        overview: 'Smart Scheduler is an AI-powered workforce management module that intelligently builds schedules, resolves conflicts, and adapts to leave rules, overtime constraints, and departmental availability. It goes beyond basic calendar views by leveraging AI to suggest optimal staff allocation, predict scheduling bottlenecks, and automate routine shift management across the organisation.',
+        when: ['Managing complex shift rotations across multiple departments', 'Organisations operating in multiple timezones', 'Teams need AI-assisted conflict resolution for overlapping schedules', 'Compliance with regional labour laws (overtime, rest-periods) is required', 'Scaling from small teams to enterprise-level workforce planning'],
+        expectations: ['A visual weekly/monthly calendar with drag-and-drop shift blocks', 'AI-suggested schedules based on availability, roles, and preferences', 'Real-time conflict detection with automatic resolution suggestions', 'Department-level views with filtering and search', 'Integration with HRMS systems for live employee data sync'],
+        considerations: 'Start with a guided onboarding that captures industry, departments, working hours, and leave rules so the AI can generate informed first-draft schedules. Support HRMS integrations (BambooHR, Gusto, Workday) and CSV imports, with a fallback manual roster builder. Provide clear visualisations of overtime, coverage gaps, and compliance metrics.',
+        related: ['Automated Workflow Builder', 'Configurable Controls', 'AI Onboarding Wizard', 'Paginated Prompt']
+    },
 };
 
 /* ─── Color map for badge styling ─── */
@@ -606,7 +616,8 @@ const CAT_COLORS = {
     Authoring: '#7c3aed', Generation: '#2563eb', Refinement: '#f59e0b',
     Trust: '#17b26a', Management: '#ec4899',
     Input: '#3b82f6', Display: '#06b6d4', Feedback: '#f59e0b', Control: '#8b5cf6',
-    Productivity: '#2563eb', Analytics: '#17b26a', Creative: '#ec4899', Enterprise: '#7c3aed'
+    Productivity: '#2563eb', Analytics: '#17b26a', Creative: '#ec4899', Enterprise: '#7c3aed',
+    Scheduling: '#0ea5e9', Reporting: '#f59e0b', CRM: '#ef4444', Automation: '#8b5cf6'
 };
 
 /* ─── Populate detail page ─── */
