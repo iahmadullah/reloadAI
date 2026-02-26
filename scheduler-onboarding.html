@@ -1347,7 +1347,8 @@
             margin-top: 10px;
         }
 
-        .drop-zone:hover {
+        .drop-zone:hover,
+        .drop-zone.drag-over {
             border-color: var(--accent);
             background: var(--accent-bg);
         }
@@ -1530,15 +1531,6 @@
         }
 
         /* ── Suggestions Screen ── */
-        #step5 {
-            flex: 1;
-            display: none;
-            overflow: hidden;
-        }
-
-        #step5.visible {
-            display: flex;
-        }
 
         .sched-grid {
             display: grid;
@@ -1708,8 +1700,8 @@
     <header>
         <a href="aidesign.html" class="logo">reload<span>ux</span></a>
         <div class="steps">
-            <div class="sdot done" id="d1"></div>
-            <div class="sdot active" id="d2"></div>
+            <div class="sdot active" id="d1"></div>
+            <div class="sdot" id="d2"></div>
             <div class="sdot" id="d3"></div>
         </div>
     </header>
@@ -1984,6 +1976,9 @@
             setTimeout(() => {
                 document.getElementById('step1').style.display = 'none';
                 document.getElementById('step2').classList.add('visible');
+                document.getElementById('d1').classList.remove('active');
+                document.getElementById('d1').classList.add('done');
+                document.getElementById('d2').classList.add('active');
                 document.getElementById('indTitle').textContent = ind.n;
                 depts = ind.depts.map(name => ({ name, hours: { ...ind.h }, roles: [], shifts: ['Day'] }));
                 renderTabs(); renderCfg(0);
@@ -1996,7 +1991,12 @@
         function goBack() {
             document.getElementById('step2').classList.remove('visible');
             document.getElementById('step1').style.display = '';
-            document.getElementById('chatMsgs').innerHTML = ''; selId = null;
+            document.getElementById('chatMsgs').innerHTML = '';
+            selId = null;
+            document.getElementById('d2').classList.remove('active');
+            document.getElementById('d1').classList.remove('done');
+            document.getElementById('d1').classList.add('active');
+            document.querySelectorAll('.ind-card').forEach(c => c.classList.remove('active'));
         }
 
         /* ── TABS ── */
@@ -2135,10 +2135,10 @@
                     const fk = [['Sales', 'Customer Success', 'Operations', 'Tech Support'], ['Manager', 'Senior Associate', 'Associate', 'Intern']];
                     fk[0].forEach(name => { if (!depts.find(d => d.name === name)) { const ind = IND.find(i => i.id === selId); depts.push({ name, hours: { ...ind.h }, roles: [...fk[1]], shifts: ['Day', 'Morning'] }); } });
                     renderTabs(); renderCfg(0); flashCard('card-roles');
-                    ariaAI(`📊 Processed <strong>${file.name}</strong>:\n\n• <strong>4 departments</strong> added\n• <strong>4 roles</strong> per department\n• <strong>Morning & Day</strong> shifts\n\nAll updated on the left!`);
+                    ariaAI(`📊 Processed <strong>${file.name}</strong>:<br><br>• <strong>4 departments</strong> added<br>• <strong>4 roles</strong> per department<br>• <strong>Morning &amp; Day</strong> shifts<br><br>All updated on the left!`);
                 } else if (['pdf', 'doc', 'docx'].includes(ext)) {
                     depts.forEach(d => { d.shifts = ['Day', 'Morning', 'Night']; }); renderCfg(activeTab); flashCard('card-shifts');
-                    ariaAI(`📝 Scanned <strong>${file.name}</strong>:\n\n• <strong>3 shift patterns</strong> applied\n• <strong>Overtime rules</strong> extracted\n• <strong>11h rest period</strong> enabled`);
+                    ariaAI(`📝 Scanned <strong>${file.name}</strong>:<br><br>• <strong>3 shift patterns</strong> applied<br>• <strong>Overtime rules</strong> extracted<br>• <strong>11h rest period</strong> enabled`);
                 } else ariaAI(`I support CSV, Excel, PDF, and Word files.`);
                 ariaSuggestions(['Looks good!', 'Add more depts', 'Adjust hours']);
             }, 2000);
@@ -2172,10 +2172,11 @@
         function finishSetup() {
             document.getElementById('step2').classList.remove('visible');
             document.getElementById('step3').classList.add('visible');
-            document.getElementById('d2').classList.remove('active'); document.getElementById('d2').classList.add('done');
+            document.getElementById('d2').classList.remove('active');
+            document.getElementById('d2').classList.add('done');
             document.getElementById('d3').classList.add('active');
             renderS3();
-            s3ariaAI(`Welcome to Employee Onboarding! 🎉\n\nYou can:\n• <strong>Connect an HRMS</strong> (BambooHR, Gusto, etc.)\n• <strong>Upload a CSV/Excel</strong> file\n• <strong>Build a Knowledge Base</strong> with policies & docs\n\nWhat would you like to start with?`);
+            s3ariaAI(`Welcome to Employee Onboarding! 🎉<br><br>You can:<br>• <strong>Connect an HRMS</strong> (BambooHR, Gusto, etc.)<br>• <strong>Upload a CSV/Excel</strong> file<br>• <strong>Build a Knowledge Base</strong> with policies &amp; docs<br><br>What would you like to start with?`);
             setTimeout(() => s3ariaSuggestions(['Connect BambooHR', 'Upload employee CSV', 'Create knowledge base', 'Skip for now']), 500);
         }
 
@@ -2183,7 +2184,8 @@
             document.getElementById('step3').classList.remove('visible');
             document.getElementById('step2').classList.add('visible');
             document.getElementById('d3').classList.remove('active');
-            document.getElementById('d2').classList.remove('done'); document.getElementById('d2').classList.add('active');
+            document.getElementById('d2').classList.remove('done');
+            document.getElementById('d2').classList.add('active');
         }
 
         function renderS3() {
@@ -2207,7 +2209,10 @@
                 </div>
                 <div class="cfg-card" id="card-upload">
                     <div class="cfg-card-header"><div class="cfg-card-icon" style="background:#fef3c7">📤</div><div><h3>Upload Employee Data</h3><div class="sub">Drag & drop or browse for your file</div></div></div>
-                    <label class="drop-zone" id="dropZone">
+                    <label class="drop-zone" id="dropZone"
+                        ondragover="event.preventDefault();this.classList.add('drag-over')"
+                        ondragleave="this.classList.remove('drag-over')"
+                        ondrop="event.preventDefault();this.classList.remove('drag-over');handleDropZoneDrop(event)">
                         <input type="file" accept=".csv,.xlsx,.xls" onchange="handleEmpUpload(event)">
                         <div class="dz-icon">📂</div>
                         <div class="dz-text">Drop your CSV or Excel file here</div>
@@ -2244,7 +2249,7 @@
             setTimeout(() => {
                 employees = [...FAKE_EMP];
                 renderS3(); flashS3('card-hrms');
-                s3ariaAI(`✅ Connected to <strong>${hrms.name}</strong>! Imported <strong>${employees.length} employees</strong> across ${[...new Set(employees.map(e => e.dept))].length} departments.\n\nYou can see them in the employee table below.`);
+                s3ariaAI(`✅ Connected to <strong>${hrms.name}</strong>! Imported <strong>${employees.length} employees</strong> across ${[...new Set(employees.map(e => e.dept))].length} departments.<br><br>You can see them in the employee table below.`);
                 s3ariaSuggestions(['Add knowledge base', 'Upload more data', 'Launch scheduler']);
             }, 1500);
         }
@@ -2254,7 +2259,7 @@
             setTimeout(() => {
                 employees = [...FAKE_EMP.slice(0, 5)];
                 renderS3(); flashS3('card-employees');
-                s3ariaAI(`✅ Imported <strong>employees.csv</strong> from Google Drive!\n\n• <strong>${employees.length} employees</strong> loaded\n• Departments auto-detected`);
+                s3ariaAI(`✅ Imported <strong>employees.csv</strong> from Google Drive!<br><br>• <strong>${employees.length} employees</strong> loaded<br>• Departments auto-detected`);
             }, 1800);
         }
 
@@ -2265,10 +2270,27 @@
             setTimeout(() => {
                 employees = [...FAKE_EMP];
                 renderS3(); flashS3('card-employees');
-                s3ariaAI(`📊 Processed <strong>${file.name}</strong>!\n\n• <strong>${employees.length} employees</strong> imported\n• <strong>${[...new Set(employees.map(e => e.dept))].length} departments</strong> detected\n• All roles mapped automatically`);
+                s3ariaAI(`📊 Processed <strong>${file.name}</strong>!<br><br>• <strong>${employees.length} employees</strong> imported<br>• <strong>${[...new Set(employees.map(e => e.dept))].length} departments</strong> detected<br>• All roles mapped automatically`);
                 s3ariaSuggestions(['Looks good!', 'Add knowledge base', 'Launch scheduler']);
             }, 1500);
             e.target.value = '';
+        }
+
+        function handleDropZoneDrop(e) {
+            const file = e.dataTransfer.files[0]; if (!file) return;
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!['csv', 'xlsx', 'xls'].includes(ext)) {
+                s3ariaAI('Please drop a <strong>CSV</strong> or <strong>Excel</strong> file (.csv, .xlsx, .xls).');
+                return;
+            }
+            const sz = file.size < 1048576 ? (file.size / 1024).toFixed(1) + 'KB' : (file.size / 1048576).toFixed(1) + 'MB';
+            s3ariaFile(file.name, sz);
+            setTimeout(() => {
+                employees = [...FAKE_EMP];
+                renderS3(); flashS3('card-employees');
+                s3ariaAI(`📊 Processed <strong>${file.name}</strong>!<br><br>• <strong>${employees.length} employees</strong> imported<br>• <strong>${[...new Set(employees.map(e => e.dept))].length} departments</strong> detected<br>• All roles mapped automatically`);
+                s3ariaSuggestions(['Looks good!', 'Add knowledge base', 'Launch scheduler']);
+            }, 1500);
         }
 
         function handleKBUpload(e) {
@@ -2322,7 +2344,7 @@
                         const items = ['Employee Handbook', 'Leave Policy', 'Code of Conduct', 'Onboarding Guide'];
                         items.forEach(name => kbItems.push({ name, type: 'POLICY', icon: '📋' }));
                         renderS3(); flashS3('card-kb');
-                        s3ariaAI(`📚 Created a starter Knowledge Base with:\n\n• <strong>${items.join('</strong>\n• <strong>')}</strong>\n\nYou can add more documents or upload PDFs!`);
+                        s3ariaAI(`📚 Created a starter Knowledge Base with:<br><br>• <strong>${items.join('</strong><br>• <strong>')}</strong><br><br>You can add more documents or upload PDFs!`);
                         s3ariaSuggestions(['Upload a PDF', 'Add more policies', 'Launch scheduler']);
                     } else {
                         s3ariaAI('I can help build your Knowledge Base! Tell me to <strong>"create knowledge base"</strong> for starter docs, or upload your own PDFs and policies.');
@@ -2361,7 +2383,7 @@
             document.getElementById('step3').classList.remove('visible');
             document.getElementById('step4').classList.add('visible');
             renderReview();
-            s4ariaAI(`Here\'s your setup summary! 📋 Review everything and click <strong>Generate My Scheduler</strong> when ready.\n\nOr tell me if you want to change anything.`);
+            s4ariaAI(`Here\'s your setup summary! 📋 Review everything and click <strong>Generate My Scheduler</strong> when ready.<br><br>Or tell me if you want to change anything.`);
         }
 
         function goBackToStep3() { document.getElementById('step4').classList.remove('visible'); document.getElementById('step3').classList.add('visible'); }
@@ -2426,7 +2448,7 @@
         function showSuggestions() {
             document.getElementById('step5').classList.add('visible');
             renderSchedCards();
-            s5ariaAI(`I\'ve generated <strong>4 scheduling strategies</strong> based on your ${IND.find(i => i.id === selId)?.n || ''} setup! 🎯\n\n<strong>Weekly Rotation</strong> is my top recommendation for your team size and shift patterns.\n\nClick a card to select it, or ask me about any option!`);
+            s5ariaAI(`I\'ve generated <strong>4 scheduling strategies</strong> based on your ${IND.find(i => i.id === selId)?.n || ''} setup! 🎯<br><br><strong>Weekly Rotation</strong> is my top recommendation for your team size and shift patterns.<br><br>Click a card to select it, or ask me about any option!`);
             setTimeout(() => s5ariaSuggestions(['Tell me more about Weekly', 'Why is Fixed popular?', 'Compare Demand vs Flex', 'Just pick the best one']), 500);
         }
 
@@ -2450,17 +2472,21 @@
             const s = SCHED_OPTIONS.find(o => o.id === id);
             document.getElementById('s5GoBtn').disabled = false;
             document.getElementById('s5GoBtn').style.opacity = '1';
-            s5ariaAI(`Great choice! <strong>${s.title}</strong> ${s.icon} is selected.\n\n${s.desc}\n\nClick <strong>Open Scheduler</strong> to start using it!`);
+            s5ariaAI(`Great choice! <strong>${s.title}</strong> ${s.icon} is selected.<br><br>${s.desc}<br><br>Click <strong>Open Scheduler</strong> to start using it!`);
         }
 
         function s5ariaAI(html) { const c = document.getElementById('chatMsgs5'); const d = document.createElement('div'); d.className = 'msg ai'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble">${html}</div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s5ariaTyping() { const c = document.getElementById('chatMsgs5'); const d = document.createElement('div'); d.className = 'msg ai'; d.id = 'typing5'; d.innerHTML = `<div class="msg-av">✦</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`; c.appendChild(d); c.scrollTop = c.scrollHeight; }
+        function s5removeTyping() { const t = document.getElementById('typing5'); if (t) t.remove(); }
         function s5ariaSuggestions(arr) { const c = document.getElementById('chatMsgs5'); const d = document.createElement('div'); d.className = 'suggestions'; d.innerHTML = arr.map(s => `<button class="sug-btn" onclick="s5useSug(this,'${s}')">${s}</button>`).join(''); c.appendChild(d); c.scrollTop = c.scrollHeight; }
         function s5useSug(btn, text) { btn.parentElement.remove(); s5processInput(text); }
         function sendChat5() { const inp = document.getElementById('chatInp5'); const t = inp.value.trim(); if (!t) return; inp.value = ''; s5processInput(t); }
         function s5processInput(text) {
             const c5 = document.getElementById('chatMsgs5'); const ud = document.createElement('div'); ud.className = 'msg user'; ud.innerHTML = `<div class="bubble">${text}</div>`; c5.appendChild(ud); c5.scrollTop = c5.scrollHeight;
+            s5ariaTyping();
             const l = text.toLowerCase();
             setTimeout(() => {
+                s5removeTyping();
                 if (l.includes('weekly') || l.includes('rotation')) s5ariaAI('<strong>Weekly Rotation</strong> 📅 automatically cycles shifts so no one is stuck on the same pattern. It ensures fairness and prevents burnout. Best for teams of 10+ people with multiple shift types.');
                 else if (l.includes('fixed')) s5ariaAI('<strong>Fixed Schedule</strong> 📌 gives every employee the same shifts every week. It\'s the easiest to manage and employees love the predictability. Popular with small-medium teams.');
                 else if (l.includes('demand')) s5ariaAI('<strong>Demand-Based</strong> 📊 uses AI to predict busy periods and staffs accordingly. It reduces overstaffing costs by up to 30%. Best for retail, food service, and healthcare.');
@@ -2473,7 +2499,7 @@
 
         function goToScheduler() {
             document.getElementById('loadingScreen').classList.add('active');
-            setTimeout(() => { window.location.href = 'aidesign.html?onboarded=true'; }, 4000);
+            setTimeout(() => { window.location.href = 'scheduler.html'; }, 4000);
         }
     </script>
 </body>
