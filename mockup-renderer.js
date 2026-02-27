@@ -3539,6 +3539,1186 @@ function renderInteractiveMockup(id, data, container) {
         replayBtn.addEventListener('click', () => { clearTimeout(activeTimeout); isAnimating = false; startDemo(); });
         startDemo();
 
+    } else if (id === 'prompt-composer') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-pc-wrap { width:100%; max-width:480px; display:flex; flex-direction:column; gap:12px; }
+                .aid-pc-toolbar { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:8px 12px; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+                .aid-pc-tool { width:28px; height:28px; border-radius:6px; background:transparent; border:none; color:#6b7280; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; font-weight:700; transition:all 0.2s; }
+                .aid-pc-tool:hover, .aid-pc-tool.active { background:${data.color}15; color:${data.color}; }
+                .aid-pc-sep { width:1px; height:18px; background:#e5e7eb; margin:0 2px; }
+                .aid-pc-box { background:#fff; border:1.5px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 4px 20px rgba(0,0,0,0.05); transition:border-color 0.3s; }
+                .aid-pc-box.focused { border-color:${data.color}; box-shadow:0 4px 20px ${data.color}20; }
+                .aid-pc-editor { min-height:70px; font-size:14px; color:#1f2937; line-height:1.6; outline:none; position:relative; }
+                .aid-pc-cursor { display:inline-block; width:2px; height:16px; background:${data.color}; animation:blink 1s step-end infinite; vertical-align:text-bottom; margin-left:1px; }
+                @keyframes blink { 50%{ opacity:0; } }
+                .aid-pc-chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; padding-top:8px; border-top:1px solid #f3f4f6; min-height:28px; }
+                .aid-pc-chip { display:inline-flex; align-items:center; gap:5px; background:${data.color}12; color:${data.color}; border:1px solid ${data.color}30; border-radius:20px; padding:3px 10px 3px 8px; font-size:11px; font-weight:600; transform:scale(0); opacity:0; transition:all 0.35s cubic-bezier(0.175,0.885,0.32,1.275); }
+                .aid-pc-chip.show { transform:scale(1); opacity:1; }
+                .aid-pc-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+                .aid-pc-tokens { font-size:11px; color:#9ca3af; font-family:monospace; transition:color 0.4s; }
+                .aid-pc-tokens.warn { color:#f59e0b; }
+                .aid-pc-send { height:34px; padding:0 16px; background:${data.color}; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; opacity:0.4; transition:all 0.3s; box-shadow:none; }
+                .aid-pc-send.active { opacity:1; box-shadow:0 4px 14px ${data.color}44; }
+                .aid-pc-send.sent { background:#10b981; opacity:1; }
+            </style>
+            <div class="aid-pc-wrap">
+                <div class="aid-pc-toolbar">
+                    <button class="aid-pc-tool" title="Bold"><b>B</b></button>
+                    <button class="aid-pc-tool" title="Italic"><i>I</i></button>
+                    <div class="aid-pc-sep"></div>
+                    <button class="aid-pc-tool" id="pc-attach-btn" title="Attach file">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    </button>
+                    <button class="aid-pc-tool" title="Mention">@</button>
+                    <button class="aid-pc-tool" title="Voice">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                    </button>
+                </div>
+                <div class="aid-pc-box" id="pc-box">
+                    <div class="aid-pc-editor" id="pc-editor"><span id="pc-typed"></span><span class="aid-pc-cursor" id="pc-cursor"></span></div>
+                    <div class="aid-pc-chips" id="pc-chips"></div>
+                    <div class="aid-pc-footer">
+                        <span class="aid-pc-tokens" id="pc-tokens">0 / 4,096 tokens</span>
+                        <button class="aid-pc-send" id="pc-send">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const typed = document.getElementById('pc-typed');
+        const chips = document.getElementById('pc-chips');
+        const tokensEl = document.getElementById('pc-tokens');
+        const sendBtn = document.getElementById('pc-send');
+        const box = document.getElementById('pc-box');
+        let activeTimer, activeTimeout, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearInterval(activeTimer); clearTimeout(activeTimeout);
+            typed.innerHTML = ''; chips.innerHTML = ''; box.classList.remove('focused');
+            tokensEl.textContent = '0 / 4,096 tokens'; tokensEl.classList.remove('warn');
+            sendBtn.classList.remove('active', 'sent');
+            sendBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send';
+
+            activeTimeout = setTimeout(() => {
+                box.classList.add('focused');
+                const text = "Design a dashboard for our analytics team with real-time KPIs, charts, and export options.";
+                let i = 0;
+                activeTimer = setInterval(() => {
+                    typed.innerHTML += text.charAt(i); i++;
+                    const tokens = Math.round((i / text.length) * 284);
+                    tokensEl.textContent = `${tokens} / 4,096 tokens`;
+                    if (tokens > 200) tokensEl.classList.add('warn');
+                    sendBtn.classList.toggle('active', i > 5);
+                    if (i >= text.length) {
+                        clearInterval(activeTimer);
+                        activeTimeout = setTimeout(() => {
+                            // Add chip
+                            chips.innerHTML = `<div class="aid-pc-chip" id="pc-chip1">📄 brief.pdf</div>`;
+                            setTimeout(() => document.getElementById('pc-chip1').classList.add('show'), 50);
+                            activeTimeout = setTimeout(() => {
+                                sendBtn.classList.add('sent');
+                                sendBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Sent!';
+                                activeTimeout = setTimeout(() => {
+                                    typed.innerHTML = ''; chips.innerHTML = ''; box.classList.remove('focused');
+                                    tokensEl.textContent = '0 / 4,096 tokens'; tokensEl.classList.remove('warn');
+                                    sendBtn.classList.remove('active', 'sent');
+                                    sendBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send';
+                                    isAnimating = false;
+                                }, 1500);
+                            }, 800);
+                        }, 500);
+                    }
+                }, 28);
+            }, 400);
+        };
+        replayBtn.addEventListener('click', () => { clearInterval(activeTimer); clearTimeout(activeTimeout); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'voice-waveform') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-vw-wrap { width:100%; max-width:480px; background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:28px 24px; box-shadow:0 8px 30px rgba(0,0,0,0.05); display:flex; flex-direction:column; align-items:center; gap:20px; }
+                .aid-vw-status { font-size:12px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; color:#9ca3af; transition:color 0.3s; }
+                .aid-vw-status.live { color:${data.color}; }
+                .aid-vw-canvas { display:flex; align-items:center; justify-content:center; gap:3px; height:60px; width:100%; }
+                .aid-vw-bar { width:3px; background:${data.color}; border-radius:3px; transition:height 0.08s ease; opacity:0.2; }
+                .aid-vw-bar.live { opacity:1; }
+                .aid-vw-mic-ring { position:relative; width:80px; height:80px; display:flex; align-items:center; justify-content:center; }
+                .aid-vw-ring { position:absolute; inset:0; border-radius:50%; border:2px solid ${data.color}; opacity:0; transform:scale(0.9); }
+                .aid-vw-mic-ring.recording .aid-vw-ring:nth-child(1) { animation:vw-ripple 2s linear infinite; }
+                .aid-vw-mic-ring.recording .aid-vw-ring:nth-child(2) { animation:vw-ripple 2s linear infinite 0.65s; }
+                .aid-vw-mic-ring.recording .aid-vw-ring:nth-child(3) { animation:vw-ripple 2s linear infinite 1.3s; }
+                @keyframes vw-ripple { 0%{transform:scale(0.85);opacity:0.9;} 100%{transform:scale(1.7);opacity:0;} }
+                .aid-vw-mic { width:64px; height:64px; border-radius:50%; background:#f3f4f6; border:1.5px solid #e5e7eb; color:#6b7280; display:flex; align-items:center; justify-content:center; position:relative; z-index:2; transition:all 0.35s ease; box-shadow:0 4px 12px rgba(0,0,0,0.06); cursor:pointer; }
+                .aid-vw-mic-ring.recording .aid-vw-mic { background:${data.color}; color:#fff; border-color:${data.color}; box-shadow:0 8px 24px ${data.color}55; transform:scale(1.06); }
+                .aid-vw-timer { font-size:13px; font-family:monospace; color:#6b7280; background:#f3f4f6; padding:4px 14px; border-radius:20px; opacity:0; transition:opacity 0.3s; }
+                .aid-vw-timer.show { opacity:1; }
+                .aid-vw-transcript { font-size:13px; color:#374151; background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:10px 14px; width:100%; min-height:36px; line-height:1.5; opacity:0; transition:opacity 0.4s; }
+                .aid-vw-transcript.show { opacity:1; }
+            </style>
+            <div class="aid-vw-wrap">
+                <div class="aid-vw-status" id="vw-status">Idle — tap mic to start</div>
+                <div class="aid-vw-canvas" id="vw-canvas"></div>
+                <div class="aid-vw-mic-ring" id="vw-ring">
+                    <div class="aid-vw-ring"></div><div class="aid-vw-ring"></div><div class="aid-vw-ring"></div>
+                    <div class="aid-vw-mic">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+                    </div>
+                </div>
+                <div class="aid-vw-timer" id="vw-timer">0:00</div>
+                <div class="aid-vw-transcript" id="vw-transcript"></div>
+            </div>
+        `;
+
+        // Build bars
+        const canvas = document.getElementById('vw-canvas');
+        const BAR_COUNT = 40;
+        for (let b = 0; b < BAR_COUNT; b++) {
+            const bar = document.createElement('div');
+            bar.className = 'aid-vw-bar';
+            bar.style.height = '6px';
+            canvas.appendChild(bar);
+        }
+        const bars = canvas.querySelectorAll('.aid-vw-bar');
+        const ring = document.getElementById('vw-ring');
+        const statusEl = document.getElementById('vw-status');
+        const timerEl = document.getElementById('vw-timer');
+        const transcriptEl = document.getElementById('vw-transcript');
+        const replayBtn = document.getElementById('raw-demo-replay');
+        let vizInterval, timerInterval, activeTimeout, isAnimating = false, seconds = 0;
+
+        const animateBars = () => {
+            bars.forEach((bar, i) => {
+                const center = BAR_COUNT / 2;
+                const dist = Math.abs(i - center) / center;
+                const base = (1 - dist) * 45;
+                const h = 4 + base + Math.random() * 20;
+                bar.style.height = h + 'px';
+            });
+        };
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearInterval(vizInterval); clearInterval(timerInterval); clearTimeout(activeTimeout);
+            ring.classList.remove('recording'); bars.forEach(b => { b.style.height = '6px'; b.classList.remove('live'); });
+            statusEl.classList.remove('live'); statusEl.textContent = 'Idle — tap mic to start';
+            timerEl.classList.remove('show'); transcriptEl.classList.remove('show'); transcriptEl.textContent = '';
+            seconds = 0;
+
+            activeTimeout = setTimeout(() => {
+                ring.classList.add('recording');
+                bars.forEach(b => b.classList.add('live'));
+                statusEl.classList.add('live'); statusEl.textContent = '● Recording';
+                timerEl.classList.add('show');
+                vizInterval = setInterval(animateBars, 80);
+                timerInterval = setInterval(() => { seconds++; timerEl.textContent = `0:${seconds < 10 ? '0' + seconds : seconds}`; }, 1000);
+
+                const words = 'Generate a weekly summary report of our marketing performance'.split(' ');
+                let wi = 0, built = [];
+                const typeWord = () => {
+                    if (wi < words.length) {
+                        built.push(words[wi++]);
+                        transcriptEl.textContent = built.join(' ');
+                        transcriptEl.classList.add('show');
+                        activeTimeout = setTimeout(typeWord, 170 + Math.random() * 180);
+                    } else {
+                        activeTimeout = setTimeout(() => {
+                            clearInterval(vizInterval); clearInterval(timerInterval);
+                            ring.classList.remove('recording');
+                            bars.forEach(b => { b.style.height = '6px'; b.classList.remove('live'); });
+                            statusEl.textContent = 'Processing...';
+                            activeTimeout = setTimeout(() => { statusEl.textContent = 'Done!'; setTimeout(() => { isAnimating = false; }, 800); }, 1000);
+                        }, 600);
+                    }
+                };
+                activeTimeout = setTimeout(typeWord, 500);
+            }, 700);
+        };
+        replayBtn.addEventListener('click', () => { clearInterval(vizInterval); clearInterval(timerInterval); clearTimeout(activeTimeout); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'file-drop-zone') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-fz-wrap { width:100%; max-width:480px; display:flex; flex-direction:column; gap:12px; }
+                .aid-fz-zone { background:#fff; border:2px dashed #d1d5db; border-radius:14px; padding:36px 24px; display:flex; flex-direction:column; align-items:center; gap:10px; transition:all 0.35s ease; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
+                .aid-fz-zone.drag { border-color:${data.color}; background:${data.color}06; transform:scale(1.015); box-shadow:0 4px 24px ${data.color}20; }
+                .aid-fz-zone.shrunk { padding:14px 20px; flex-direction:row; justify-content:flex-start; gap:10px; border-style:solid; border-color:#e5e7eb; }
+                .aid-fz-icon-box { width:48px; height:48px; border-radius:12px; background:${data.color}15; display:flex; align-items:center; justify-content:center; color:${data.color}; transition:all 0.3s; }
+                .aid-fz-zone.drag .aid-fz-icon-box { transform:translateY(-4px) scale(1.1); }
+                .aid-fz-title { font-size:14px; font-weight:600; color:#374151; }
+                .aid-fz-hint { font-size:12px; color:#9ca3af; }
+                .aid-fz-files { display:flex; flex-direction:column; gap:8px; }
+                .aid-fz-file { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:10px; box-shadow:0 2px 8px rgba(0,0,0,0.04); transform:translateY(10px); opacity:0; transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+                .aid-fz-file.show { transform:translateY(0); opacity:1; }
+                .aid-fz-file-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+                .aid-fz-file-info { flex:1; }
+                .aid-fz-file-name { font-size:13px; font-weight:600; color:#111827; }
+                .aid-fz-file-size { font-size:11px; color:#9ca3af; margin-top:1px; }
+                .aid-fz-progress { height:4px; background:#e5e7eb; border-radius:2px; margin-top:6px; overflow:hidden; }
+                .aid-fz-bar { height:100%; width:0%; border-radius:2px; background:${data.color}; transition:width 0.7s ease-out; }
+                .aid-fz-check { width:20px; height:20px; border-radius:50%; background:#10b981; color:#fff; display:flex; align-items:center; justify-content:center; opacity:0; transform:scale(0); transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275); flex-shrink:0; }
+                .aid-fz-check.show { opacity:1; transform:scale(1); }
+                .aid-fz-summary { text-align:center; font-size:12px; color:${data.color}; font-weight:600; opacity:0; transition:opacity 0.4s; }
+                .aid-fz-summary.show { opacity:1; }
+            </style>
+            <div class="aid-fz-wrap">
+                <div class="aid-fz-zone" id="fz-zone">
+                    <div class="aid-fz-icon-box" id="fz-icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <div class="aid-fz-title" id="fz-title">Drop files here or browse</div>
+                    <div class="aid-fz-hint" id="fz-hint">PDF, DOCX, PNG, JPG up to 25MB</div>
+                </div>
+                <div class="aid-fz-files" id="fz-files"></div>
+                <div class="aid-fz-summary" id="fz-summary">✅ 2 files attached and ready</div>
+            </div>
+        `;
+
+        const zone = document.getElementById('fz-zone');
+        const filesEl = document.getElementById('fz-files');
+        const summaryEl = document.getElementById('fz-summary');
+        const replayBtn = document.getElementById('raw-demo-replay');
+        let activeTimeout, isAnimating = false;
+
+        const makeFile = (icon, name, size, color) => {
+            const div = document.createElement('div');
+            div.className = 'aid-fz-file';
+            div.innerHTML = `
+                <div class="aid-fz-file-icon" style="background:${color}15">${icon}</div>
+                <div class="aid-fz-file-info">
+                    <div class="aid-fz-file-name">${name}</div>
+                    <div class="aid-fz-file-size">${size}</div>
+                    <div class="aid-fz-progress"><div class="aid-fz-bar"></div></div>
+                </div>
+                <div class="aid-fz-check">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>`;
+            return div;
+        };
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(activeTimeout);
+            filesEl.innerHTML = ''; summaryEl.classList.remove('show');
+            zone.classList.remove('drag', 'shrunk');
+            document.getElementById('fz-title').style.display = '';
+            document.getElementById('fz-hint').style.display = '';
+
+            activeTimeout = setTimeout(() => {
+                zone.classList.add('drag');
+                activeTimeout = setTimeout(() => {
+                    zone.classList.remove('drag');
+                    // File 1
+                    const f1 = makeFile('📄', 'Q3_Report.pdf', '2.4 MB', '#ef4444');
+                    filesEl.appendChild(f1);
+                    setTimeout(() => f1.classList.add('show'), 50);
+                    setTimeout(() => { f1.querySelector('.aid-fz-bar').style.width = '100%'; }, 200);
+                    setTimeout(() => { f1.querySelector('.aid-fz-check').classList.add('show'); }, 950);
+
+                    // File 2
+                    activeTimeout = setTimeout(() => {
+                        const f2 = makeFile('🖼️', 'Brand_Guidelines.png', '4.1 MB', '#8b5cf6');
+                        filesEl.appendChild(f2);
+                        setTimeout(() => f2.classList.add('show'), 50);
+                        setTimeout(() => { f2.querySelector('.aid-fz-bar').style.width = '100%'; }, 200);
+                        setTimeout(() => { f2.querySelector('.aid-fz-check').classList.add('show'); }, 950);
+
+                        activeTimeout = setTimeout(() => {
+                            summaryEl.classList.add('show');
+                            isAnimating = false;
+                        }, 1100);
+                    }, 900);
+                }, 700);
+            }, 500);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(activeTimeout); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'context-chip') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-cc-wrap { width:100%; max-width:480px; background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:14px; }
+                .aid-cc-label { font-size:11px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#9ca3af; }
+                .aid-cc-tray { display:flex; flex-wrap:wrap; gap:8px; min-height:36px; }
+                .aid-cc-chip { display:inline-flex; align-items:center; gap:6px; padding:5px 10px 5px 9px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid transparent; transform:scale(0); opacity:0; transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); position:relative; cursor:default; }
+                .aid-cc-chip.show { transform:scale(1); opacity:1; }
+                .aid-cc-chip.exit { transform:scale(0.8) translateY(4px); opacity:0; }
+                .aid-cc-chip--file { background:#eff6ff; color:#2563eb; border-color:#bfdbfe; }
+                .aid-cc-chip--persona { background:#f5f3ff; color:#7c3aed; border-color:#ddd6fe; }
+                .aid-cc-chip--model { background:#f0fdf4; color:#16a34a; border-color:#bbf7d0; }
+                .aid-cc-x { width:14px; height:14px; border-radius:50%; background:rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; cursor:pointer; margin-left:2px; transition:background 0.2s; }
+                .aid-cc-x:hover { background:rgba(0,0,0,0.2); }
+                .aid-cc-tooltip { position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%) translateY(4px); background:#1f2937; color:#fff; font-size:11px; padding:6px 10px; border-radius:7px; white-space:nowrap; pointer-events:none; opacity:0; transition:all 0.25s ease; z-index:20; }
+                .aid-cc-tooltip::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:#1f2937; }
+                .aid-cc-chip:hover .aid-cc-tooltip { opacity:1; transform:translateX(-50%) translateY(0); }
+                .aid-cc-counter { font-size:11px; color:#6b7280; background:#f3f4f6; padding:3px 10px; border-radius:10px; align-self:center; transition:all 0.3s; }
+                .aid-cc-input { background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:8px 12px; font-size:13px; color:#9ca3af; display:flex; align-items:center; gap:8px; }
+            </style>
+            <div class="aid-cc-wrap">
+                <div class="aid-cc-label">Active Context</div>
+                <div class="aid-cc-tray" id="cc-tray"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div class="aid-cc-input">+ Add context...</div>
+                    <div class="aid-cc-counter" id="cc-counter">0 active</div>
+                </div>
+            </div>
+        `;
+
+        const tray = document.getElementById('cc-tray');
+        const counter = document.getElementById('cc-counter');
+        const replayBtn = document.getElementById('raw-demo-replay');
+        let activeTimeout, isAnimating = false;
+
+        const chips = [
+            { label: '📄 brief.pdf', cls: 'aid-cc-chip--file', tip: '2.4 MB · PDF document' },
+            { label: '👤 Expert Tone', cls: 'aid-cc-chip--persona', tip: 'Persona: Professional & concise' },
+            { label: '⚡ GPT-4o', cls: 'aid-cc-chip--model', tip: 'OpenAI · 128k context window' },
+        ];
+
+        let chipEls = [];
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(activeTimeout);
+            tray.innerHTML = ''; chipEls = []; counter.textContent = '0 active';
+
+            const addChip = (idx) => {
+                if (idx >= chips.length) {
+                    // Remove chip 1 after a pause
+                    activeTimeout = setTimeout(() => {
+                        chipEls[0].classList.add('exit');
+                        setTimeout(() => {
+                            chipEls[0].remove(); chipEls.shift();
+                            counter.textContent = chipEls.length + ' active';
+                            setTimeout(() => { isAnimating = false; }, 600);
+                        }, 400);
+                    }, 1200);
+                    return;
+                }
+                const c = chips[idx];
+                const el = document.createElement('div');
+                el.className = `aid-cc-chip ${c.cls}`;
+                el.innerHTML = `${c.label}<div class="aid-cc-x"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div><div class="aid-cc-tooltip">${c.tip}</div>`;
+                tray.appendChild(el);
+                chipEls.push(el);
+                setTimeout(() => el.classList.add('show'), 30);
+                counter.textContent = chipEls.length + ' active';
+                activeTimeout = setTimeout(() => addChip(idx + 1), 500);
+            };
+
+            activeTimeout = setTimeout(() => addChip(0), 400);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(activeTimeout); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'token-counter') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-tc-wrap { width:100%; max-width:480px; background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:14px; }
+                .aid-tc-header { display:flex; justify-content:space-between; align-items:center; }
+                .aid-tc-model { font-size:11px; color:#6b7280; background:#f3f4f6; padding:3px 10px; border-radius:10px; font-weight:600; }
+                .aid-tc-count { font-size:13px; font-weight:700; color:#1f2937; font-family:monospace; transition:color 0.5s; }
+                .aid-tc-count.warn { color:#f59e0b; }
+                .aid-tc-count.danger { color:#ef4444; }
+                .aid-tc-track { height:8px; background:#f3f4f6; border-radius:4px; overflow:hidden; position:relative; }
+                .aid-tc-fill { height:100%; width:0%; border-radius:4px; background:${data.color}; transition:width 0.4s ease, background 0.5s; }
+                .aid-tc-fill.warn { background:#f59e0b; }
+                .aid-tc-fill.danger { background:#ef4444; }
+                .aid-tc-ticks { display:flex; justify-content:space-between; }
+                .aid-tc-tick { font-size:10px; color:#d1d5db; font-family:monospace; }
+                .aid-tc-warning { display:flex; align-items:center; gap:8px; background:#fef3c7; border:1px solid #fde68a; border-radius:8px; padding:8px 12px; font-size:12px; color:#92400e; font-weight:500; opacity:0; transition:opacity 0.4s; transform:translateY(4px); }
+                .aid-tc-warning.show { opacity:1; transform:translateY(0); }
+                .aid-tc-prompt { background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:10px 12px; font-size:13px; color:#374151; line-height:1.5; min-height:50px; }
+            </style>
+            <div class="aid-tc-wrap">
+                <div class="aid-tc-header">
+                    <div class="aid-tc-model">GPT-4o · 128k context</div>
+                    <div class="aid-tc-count" id="tc-count">0 / 4,096</div>
+                </div>
+                <div class="aid-tc-track"><div class="aid-tc-fill" id="tc-fill"></div></div>
+                <div class="aid-tc-ticks">
+                    <span class="aid-tc-tick">0</span>
+                    <span class="aid-tc-tick">1k</span>
+                    <span class="aid-tc-tick">2k</span>
+                    <span class="aid-tc-tick">3k</span>
+                    <span class="aid-tc-tick">4k</span>
+                </div>
+                <div class="aid-tc-prompt" id="tc-prompt"></div>
+                <div class="aid-tc-warning" id="tc-warning">⚠️ Approaching limit — consider shortening your prompt</div>
+            </div>
+        `;
+
+        const fill = document.getElementById('tc-fill');
+        const countEl = document.getElementById('tc-count');
+        const promptEl = document.getElementById('tc-prompt');
+        const warningEl = document.getElementById('tc-warning');
+        const replayBtn = document.getElementById('raw-demo-replay');
+        let activeTimer, activeTimeout, isAnimating = false;
+
+        const MAX = 4096;
+        const steps = [
+            { tokens: 128, text: 'Summarize this document.', pct: 3.1 },
+            { tokens: 820, text: 'Summarize this document. Focus on key risks, financial highlights, and executive recommendations.', pct: 20 },
+            { tokens: 2600, text: 'Summarize this document. Focus on key risks, financial highlights, and executive recommendations. Include a table of contents. Format for a C-suite audience. Use formal language. Attach a list of sources at the end. Compare with Q2 data.', pct: 63.5 },
+            { tokens: 3750, text: 'Summarize this document. Focus on key risks, financial highlights, and executive recommendations. Include a table of contents. Format for a C-suite audience. Use formal language. Attach a list of sources at the end. Compare with Q2 data. Add a visual timeline, an executive brief section, and a risk matrix with probability and impact scores.', pct: 91.5 },
+        ];
+
+        const setStep = (s) => {
+            const pct = s.pct;
+            fill.style.width = pct + '%';
+            countEl.textContent = s.tokens + ' / ' + MAX;
+            promptEl.textContent = s.text;
+            const isWarn = pct > 60;
+            const isDanger = pct > 85;
+            fill.className = 'aid-tc-fill' + (isDanger ? ' danger' : isWarn ? ' warn' : '');
+            countEl.className = 'aid-tc-count' + (isDanger ? ' danger' : isWarn ? ' warn' : '');
+            warningEl.classList.toggle('show', isDanger);
+        };
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearInterval(activeTimer); clearTimeout(activeTimeout);
+            fill.style.width = '0%'; fill.className = 'aid-tc-fill';
+            countEl.textContent = '0 / 4,096'; countEl.className = 'aid-tc-count';
+            promptEl.textContent = ''; warningEl.classList.remove('show');
+
+            let si = 0;
+            const advance = () => {
+                if (si >= steps.length) { isAnimating = false; return; }
+                setStep(steps[si++]);
+                activeTimeout = setTimeout(advance, 900);
+            };
+            activeTimeout = setTimeout(advance, 500);
+        };
+        replayBtn.addEventListener('click', () => { clearInterval(activeTimer); clearTimeout(activeTimeout); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'ai-response-bubble') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-arb-wrap { width:100%; max-width:480px; background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:16px; box-shadow:0 4px 20px rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:12px; }
+                .aid-arb-msg { display:flex; gap:10px; max-width:90%; }
+                .aid-arb-msg--user { align-self:flex-end; flex-direction:row-reverse; }
+                .aid-arb-avatar { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; }
+                .aid-arb-avatar--ai { background:linear-gradient(135deg,${data.color},${data.color}99); color:#fff; }
+                .aid-arb-avatar--user { background:#f3f4f6; color:#374151; }
+                .aid-arb-bubble { padding:10px 14px; border-radius:14px; font-size:13px; line-height:1.6; color:#1f2937; transform:translateY(8px); opacity:0; transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+                .aid-arb-bubble.show { transform:translateY(0); opacity:1; }
+                .aid-arb-bubble--user { background:#f3f4f6; border-radius:14px 14px 4px 14px; }
+                .aid-arb-bubble--ai { background:${data.color}0d; border:1px solid ${data.color}25; border-radius:14px 14px 14px 4px; }
+                .aid-arb-cursor { display:inline-block; width:8px; height:14px; background:${data.color}; animation:blink 1s step-end infinite; vertical-align:text-bottom; margin-left:2px; border-radius:1px; }
+                .aid-arb-actions { display:flex; gap:6px; padding-top:4px; opacity:0; transition:opacity 0.4s; }
+                .aid-arb-actions.show { opacity:1; }
+                .aid-arb-action { display:flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; border:1px solid #e5e7eb; background:#fff; color:#6b7280; cursor:pointer; transition:all 0.2s; }
+                .aid-arb-action:hover { border-color:${data.color}; color:${data.color}; background:${data.color}08; }
+                .aid-arb-action.thumb-up:hover { border-color:#10b981; color:#10b981; background:#f0fdf4; }
+                .aid-arb-action.thumb-down:hover { border-color:#ef4444; color:#ef4444; background:#fef2f2; }
+            </style>
+            <div class="aid-arb-wrap">
+                <div class="aid-arb-msg aid-arb-msg--user">
+                    <div class="aid-arb-avatar aid-arb-avatar--user">👤</div>
+                    <div class="aid-arb-bubble aid-arb-bubble--user" id="arb-user">Explain quantum entanglement in simple terms.</div>
+                </div>
+                <div class="aid-arb-msg">
+                    <div class="aid-arb-avatar aid-arb-avatar--ai">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+                        <div class="aid-arb-bubble aid-arb-bubble--ai" id="arb-ai"></div>
+                        <div class="aid-arb-actions" id="arb-actions">
+                            <div class="aid-arb-action">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                Copy
+                            </div>
+                            <div class="aid-arb-action">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                Retry
+                            </div>
+                            <div class="aid-arb-action thumb-up">👍</div>
+                            <div class="aid-arb-action thumb-down">👎</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const userBubble = document.getElementById('arb-user');
+        const aiBubble = document.getElementById('arb-ai');
+        const actionsEl = document.getElementById('arb-actions');
+        const replayBtn = document.getElementById('raw-demo-replay');
+        let activeTimer, activeTimeout, isAnimating = false;
+
+        const aiText = "Quantum entanglement is when two particles become linked — measuring one **instantly** affects the other, no matter the distance. Einstein called it \"spooky action at a distance\"! 👾";
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearInterval(activeTimer); clearTimeout(activeTimeout);
+            userBubble.classList.remove('show'); aiBubble.innerHTML = ''; aiBubble.classList.remove('show'); actionsEl.classList.remove('show');
+
+            activeTimeout = setTimeout(() => {
+                userBubble.classList.add('show');
+                activeTimeout = setTimeout(() => {
+                    aiBubble.innerHTML = '<span class="aid-arb-cursor"></span>';
+                    aiBubble.classList.add('show');
+                    let i = 0;
+                    activeTimer = setInterval(() => {
+                        // Simple bold rendering
+                        const raw = aiText.substring(0, i + 1);
+                        const rendered = raw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        aiBubble.innerHTML = rendered + (i < aiText.length - 1 ? '<span class="aid-arb-cursor"></span>' : '');
+                        i++;
+                        if (i >= aiText.length) {
+                            clearInterval(activeTimer);
+                            activeTimeout = setTimeout(() => {
+                                actionsEl.classList.add('show');
+                                isAnimating = false;
+                            }, 500);
+                        }
+                    }, 22);
+                }, 700);
+            }, 400);
+        };
+        replayBtn.addEventListener('click', () => { clearInterval(activeTimer); clearTimeout(activeTimeout); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'confidence-badge') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-cb-widget { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; font-family: Inter, sans-serif; position: relative;}
+                .aid-cb-p { flex: 1; border-radius: 8px; padding: 12px; background: #f9fafb; font-size: 14px; color: #374151; display: flex; align-items: flex-start; gap: 12px; position:relative; overflow: visible; font-family: Inter, sans-serif;}
+                .aid-cb-text { line-height: 1.5; }
+                .aid-cb-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; cursor: default; transition: all 0.2s ease;}
+                .aid-cb-badge.high { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;}
+                .aid-cb-badge.med { background: #fef08a; color: #854d0e; border: 1px solid #fde047;}
+                .aid-cb-badge.low { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;}
+                
+                .aid-cb-tooltip { position: absolute; top: -30px; left: 50%; transform: translateX(-50%) scale(0.9); opacity: 0; background: #1f2937; color: white; font-size: 12px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10;}
+                .aid-cb-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border-width: 4px; border-style: solid; border-color: #1f2937 transparent transparent transparent; }
+                
+                .aid-cb-badge.hovered { transform: scale(1.05); filter: brightness(0.95); }
+                .aid-cb-badge.hovered .aid-cb-tooltip { opacity: 1; transform: translateX(-50%) scale(1); top: -34px;}
+
+                .aid-cb-cursor { position: absolute; width: 24px; height: 24px; top: 85%; right: 10%; opacity: 0; pointer-events: none; z-index: 20; transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+            </style>
+            <div class="aid-cb-widget" id="cb-box">
+                <div class="aid-cb-p">
+                    <div class="aid-cb-text">According to current market data, the AI sector is projected to grow by 37.3% annually from 2023 to 2030.</div>
+                    <div class="aid-cb-badge high" id="cb-b1">
+                        HIGH
+                        <div class="aid-cb-tooltip">95% confidence</div>
+                    </div>
+                </div>
+                <div class="aid-cb-p">
+                    <div class="aid-cb-text">Competitor ad-spend patterns suggest a shift towards short-form video content in Q3.</div>
+                    <div class="aid-cb-badge med" id="cb-b2">
+                        MED
+                        <div class="aid-cb-tooltip">68% confidence</div>
+                    </div>
+                </div>
+                <div class="aid-cb-p">
+                    <div class="aid-cb-text">This strategy will result in exactly 2.4x ROI within the first 14 days of launch.</div>
+                    <div class="aid-cb-badge low" id="cb-b3">
+                        LOW
+                        <div class="aid-cb-tooltip">28% confidence</div>
+                    </div>
+                </div>
+                <svg class="aid-cb-cursor" id="cb-cursor" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+                    <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" fill="#fff"/>
+                </svg>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const cursor = document.getElementById('cb-cursor');
+        const b1 = document.getElementById('cb-b1');
+        const b3 = document.getElementById('cb-b3');
+        let t1, t2, t3, t4, t5, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5);
+            b1.classList.remove('hovered'); b3.classList.remove('hovered');
+            cursor.style.opacity = '0'; cursor.style.transform = 'translate(0px, 0px)';
+
+            t1 = setTimeout(() => {
+                cursor.style.opacity = '1';
+                cursor.style.transform = 'translate(-30px, -60px)'; // move to LOW badge
+
+                t2 = setTimeout(() => {
+                    b3.classList.add('hovered');
+
+                    t3 = setTimeout(() => {
+                        b3.classList.remove('hovered');
+                        cursor.style.transform = 'translate(-20px, -230px)'; // move to HIGH badge
+
+                        t4 = setTimeout(() => {
+                            b1.classList.add('hovered');
+
+                            t5 = setTimeout(() => {
+                                b1.classList.remove('hovered');
+                                cursor.style.opacity = '0';
+                                cursor.style.transform = 'translate(0px, 0px)';
+                                isAnimating = false;
+                            }, 1500);
+                        }, 500);
+                    }, 1500);
+                }, 500);
+            }, 600);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'citation-card') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-cc-widget { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 8px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 24px 20px; font-family: Inter, sans-serif; position: relative; min-height: 240px; box-sizing: border-box;}
+                .aid-cc-text { font-size: 15px; color: #374151; line-height: 1.6; }
+                .aid-cc-ref { display: inline-flex; justify-content: center; align-items: center; width: 18px; height: 18px; border-radius: 4px; background: #e0e7ff; color: #4338ca; font-size: 11px; font-weight: 600; cursor: default; margin: 0 4px; vertical-align: super; transition: all 0.2s; position: relative; z-index: 5;}
+                .aid-cc-ref.hovered { background: #4338ca; color: white; transform: scale(1.1); }
+                
+                .aid-cc-card { position: absolute; top: 75px; left: 40px; right: 20px; background: white; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 16px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 10;}
+                .aid-cc-card.open { opacity: 1; transform: translateY(0); pointer-events: auto;}
+                
+                .aid-cc-card-title { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;}
+                .aid-cc-card-domain { font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 4px; margin-bottom: 12px;}
+                .aid-cc-card-snippet { font-size: 13px; color: #4b5563; line-height: 1.5; padding-left: 10px; border-left: 3px solid #e0e7ff; margin-bottom: 12px;}
+                .aid-cc-card-btn { background: #f3f4f6; color: #374151; font-size: 13px; font-weight: 500; border-radius: 6px; padding: 6px 12px; text-align: center; cursor: default; transition: background 0.2s;}
+                
+                .aid-cc-cursor { position: absolute; width: 24px; height: 24px; top: 180px; left: 380px; opacity: 0; pointer-events: none; z-index: 20; transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+                .aid-cc-cursor.clicking { transform: scale(0.9); }
+            </style>
+            <div class="aid-cc-widget" id="cc-box">
+                <div class="aid-cc-text">
+                    The latest research indicates that neural networks with dynamic routing are 40% more efficient at handling sparse spatial data<span class="aid-cc-ref" id="cc-ref">1</span> while reducing inference latency.
+                </div>
+                
+                <div class="aid-cc-card" id="cc-card">
+                    <div class="aid-cc-card-title">Dynamic Routing in Sparse Networks <span style="font-size:11px; color:#10b981; font-weight:500; background:#d1fae5; padding:2px 6px; border-radius:10px;">98% relevant</span></div>
+                    <div class="aid-cc-card-domain">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        nature.com/articles/s41586-023
+                    </div>
+                    <div class="aid-cc-card-snippet">"...our empirical results demonstrate a 40.2% efficiency gain when applying dynamic routing matrices to spatially sparse datasets compared to static topologies."</div>
+                    <div class="aid-cc-card-btn">View Source →</div>
+                </div>
+
+                <svg class="aid-cc-cursor" id="cc-cursor" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
+                    <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" fill="#fff"/>
+                </svg>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const cursor = document.getElementById('cc-cursor');
+        const ref = document.getElementById('cc-ref');
+        const card = document.getElementById('cc-card');
+        let t1, t2, t3, t4, t5, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5);
+            ref.classList.remove('hovered'); card.classList.remove('open'); cursor.classList.remove('clicking');
+            cursor.style.opacity = '0';
+            cursor.style.top = '180px'; cursor.style.left = '380px';
+
+            t1 = setTimeout(() => {
+                cursor.style.opacity = '1';
+                cursor.style.top = '38px'; cursor.style.left = '165px'; // Move to [1]
+
+                t2 = setTimeout(() => {
+                    ref.classList.add('hovered');
+
+                    t3 = setTimeout(() => {
+                        cursor.classList.add('clicking');
+
+                        t4 = setTimeout(() => {
+                            cursor.classList.remove('clicking');
+                            card.classList.add('open');
+                            cursor.style.top = '100px'; cursor.style.left = '250px'; // move away
+
+                            t5 = setTimeout(() => {
+                                cursor.style.opacity = '0';
+                                isAnimating = false;
+                            }, 2000);
+                        }, 150);
+                    }, 400);
+                }, 600);
+            }, 500);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'diff-viewer') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-dv-widget { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 0; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; font-family: Inter, sans-serif;}
+                .aid-dv-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #e5e7eb; background: #f9fafb;}
+                .aid-dv-title { font-size: 13px; font-weight: 600; color: #374151;}
+                .aid-dv-btn { background: #4f46e5; color: white; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 6px 12px; cursor: default; outline: none; transition: all 0.2s; min-width: 76px; text-align: center;}
+                .aid-dv-btn.disabled { background: #e5e7eb; color: #9ca3af; }
+                .aid-dv-btn.pulse { animation: dvPulse 1.5s infinite; }
+                @keyframes dvPulse { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
+                
+                .aid-dv-body { display: flex; min-height: 160px;}
+                .aid-dv-pane { flex: 1; padding: 16px; font-size: 13px; line-height: 1.6; color: #4b5563; position: relative; border-right: 1px solid #e5e7eb;}
+                .aid-dv-pane:last-child { border-right: none; }
+                .aid-dv-pane-title { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #9ca3af; margin-bottom: 8px;}
+                
+                .aid-dv-del { background: #fecaca; color: #991b1b; text-decoration: line-through; padding: 0 2px; border-radius: 2px; opacity: 1; transition: opacity 0.4s;}
+                .aid-dv-add { background: #dcfce7; color: #166534; padding: 0 2px; border-radius: 2px; transition: all 0.4s;}
+                
+                .aid-dv-widget.accepted .aid-dv-del { opacity: 0; display: inline-block; width: 0; overflow: hidden; padding: 0; margin: 0; font-size: 0;}
+                .aid-dv-widget.accepted .aid-dv-add { background: transparent; color: #4b5563; padding: 0;}
+            </style>
+            <div class="aid-dv-widget" id="dv-box">
+                <div class="aid-dv-header">
+                    <div class="aid-dv-title">Review Changes</div>
+                    <div class="aid-dv-btn disabled" id="dv-btn">Accept All</div>
+                </div>
+                <div class="aid-dv-body">
+                    <div class="aid-dv-pane">
+                        <div class="aid-dv-pane-title">Original</div>
+                        Our team is happy to announce that we are releasing the new version of our software next month. It will be very good.
+                    </div>
+                    <div class="aid-dv-pane">
+                        <div class="aid-dv-pane-title">AI Edited</div>
+                        <div id="dv-text"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const textContainer = document.getElementById('dv-text');
+        const btn = document.getElementById('dv-btn');
+        const box = document.getElementById('dv-box');
+        let t1, t2, activeTimer, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(t1); clearTimeout(t2); clearInterval(activeTimer);
+            box.classList.remove('accepted');
+            btn.className = 'aid-dv-btn disabled';
+            btn.innerHTML = 'Accept All';
+            textContainer.innerHTML = '';
+
+            const chunks = [
+                { type: 'text', val: 'We ' },
+                { type: 'del', val: 'Our team is happy to announce that we ' },
+                { type: 'text', val: 'are ' },
+                { type: 'add', val: 'thrilled to launch ' },
+                { type: 'del', val: 'releasing ' },
+                { type: 'text', val: 'the ' },
+                { type: 'text', val: 'new version of our software next month. It will ' },
+                { type: 'add', val: 'deliver significant performance upgrades' },
+                { type: 'del', val: 'be very good' },
+                { type: 'text', val: '.' }
+            ];
+
+            let htmlString = "";
+            let chunkIdx = 0;
+
+            t1 = setTimeout(() => {
+                activeTimer = setInterval(() => {
+                    if (chunkIdx >= chunks.length) {
+                        clearInterval(activeTimer);
+                        btn.className = 'aid-dv-btn pulse';
+
+                        t2 = setTimeout(() => {
+                            btn.className = 'aid-dv-btn disabled';
+                            btn.innerHTML = 'Accepted';
+                            box.classList.add('accepted');
+                            isAnimating = false;
+                        }, 2000);
+                        return;
+                    }
+
+                    const chunk = chunks[chunkIdx];
+                    if (chunk.type === 'text') {
+                        htmlString += chunk.val;
+                    } else if (chunk.type === 'del') {
+                        htmlString += '<span class="aid-dv-del">' + chunk.val + '</span>';
+                    } else if (chunk.type === 'add') {
+                        htmlString += '<span class="aid-dv-add">' + chunk.val + '</span>';
+                    }
+                    textContainer.innerHTML = htmlString;
+                    chunkIdx++;
+                }, 300);
+            }, 500);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(t1); clearTimeout(t2); clearInterval(activeTimer); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'result-carousel') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-rc-widget { width: 100%; max-width: 440px; position: relative; font-family: Inter, sans-serif; height: 180px; overflow: hidden; border-radius: 12px;}
+                .aid-rc-track { display: flex; width: 300%; height: 100%; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+                .aid-rc-card { flex: 1 0 33.333%; height: 100%; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-start;}
+                
+                .aid-rc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;}
+                .aid-rc-badge { background: #e0e7ff; color: #4338ca; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 12px; text-transform: uppercase;}
+                .aid-rc-fav { width: 20px; height: 20px; color: #9ca3af; transition: all 0.2s; cursor: default; }
+                .aid-rc-fav.active { color: #f43f5e; fill: #f43f5e; transform: scale(1.1); }
+                
+                .aid-rc-content { font-size: 14px; color: #111827; line-height: 1.5; font-weight: 600;}
+                .aid-rc-sub { font-size: 13px; color: #6b7280; line-height: 1.5; margin-top: 8px;}
+                
+                .aid-rc-dots { position: absolute; bottom: 16px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 10;}
+                .aid-rc-dot { width: 6px; height: 6px; border-radius: 50%; background: #d1d5db; transition: all 0.3s; }
+                .aid-rc-dot.active { background: #4f46e5; width: 16px; border-radius: 4px; }
+            </style>
+            <div class="aid-rc-widget">
+                <div class="aid-rc-track" id="rc-track">
+                    <!-- Card 1 -->
+                    <div class="aid-rc-card">
+                        <div class="aid-rc-header">
+                            <div class="aid-rc-badge">Option A</div>
+                            <svg class="aid-rc-fav" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="aid-rc-content">Professional & Direct</div>
+                            <div class="aid-rc-sub">"Our revolutionary platform streamlines your workflow, saving an average of 14 hours per team member weekly."</div>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="aid-rc-card">
+                        <div class="aid-rc-header">
+                            <div class="aid-rc-badge">Option B</div>
+                            <svg class="aid-rc-fav" id="rc-fav2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="aid-rc-content">Conversational & Warm</div>
+                            <div class="aid-rc-sub">"Imagine getting your Friday afternoons back. That's exactly what our platform does by automating repetitive tasks."</div>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="aid-rc-card">
+                        <div class="aid-rc-header">
+                            <div class="aid-rc-badge">Option C</div>
+                            <svg class="aid-rc-fav" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="aid-rc-content">Data-Driven & Bold</div>
+                            <div class="aid-rc-sub">"38% efficiency increase. 0 integration headaches. The definitive workflow automation solution for enterprise."</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="aid-rc-dots">
+                    <div class="aid-rc-dot active" id="rc-dot0"></div>
+                    <div class="aid-rc-dot" id="rc-dot1"></div>
+                    <div class="aid-rc-dot" id="rc-dot2"></div>
+                </div>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const track = document.getElementById('rc-track');
+        const dots = [document.getElementById('rc-dot0'), document.getElementById('rc-dot1'), document.getElementById('rc-dot2')];
+        const fav2 = document.getElementById('rc-fav2');
+        let t1, t2, t3, t4, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+            track.style.transform = 'translateX(0)';
+            dots.forEach(d => d.classList.remove('active')); dots[0].classList.add('active');
+            fav2.classList.remove('active');
+
+            t1 = setTimeout(() => {
+                track.style.transform = 'translateX(-33.3333%)';
+                dots.forEach(d => d.classList.remove('active')); dots[1].classList.add('active');
+
+                t2 = setTimeout(() => {
+                    fav2.classList.add('active');
+
+                    t3 = setTimeout(() => {
+                        track.style.transform = 'translateX(-66.6666%)';
+                        dots.forEach(d => d.classList.remove('active')); dots[2].classList.add('active');
+
+                        t4 = setTimeout(() => {
+                            isAnimating = false;
+                        }, 2000);
+                    }, 2000);
+                }, 800);
+            }, 2000);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); isAnimating = false; startDemo(); });
+        startDemo();
+    } else if (id === 'suggestion-chip') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-sc-widget { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; font-family: Inter, sans-serif; }
+                .aid-sc-bubble { background: #f3f4f6; padding: 16px; border-radius: 12px 12px 12px 2px; color: #374151; font-size: 14px; line-height: 1.5; }
+                .aid-sc-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+                .aid-sc-chip { background: #ffffff; border: 1px solid #d1d5db; border-radius: 100px; padding: 6px 14px; font-size: 13px; color: #4b5563; font-weight: 500; opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 6px; }
+                .aid-sc-chip svg { width: 14px; height: 14px; color: #9ca3af; }
+                .aid-sc-chip.show { opacity: 1; transform: translateY(0); }
+                .aid-sc-chip.hovered { background: #f9fafb; border-color: #9ca3af; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+                .aid-sc-input { margin-top: 8px; border: 1px solid #e5e7eb; border-radius: 20px; padding: 12px 16px; font-size: 14px; color: #9ca3af; display: flex; align-items: center; justify-content: space-between; background: #ffffff; }
+                
+                .aid-sc-cursor { position: absolute; width: 24px; height: 24px; top: 120px; left: 300px; opacity: 0; pointer-events: none; z-index: 20; transition: all 0.5s ease-out; }
+            </style>
+            <div class="aid-sc-widget" id="sc-box">
+                <div class="aid-sc-bubble">Here is the summary of the Q3 earnings report. It highlights a 14% increase in recurring revenue.</div>
+                <div class="aid-sc-chips">
+                    <div class="aid-sc-chip" id="sc-c1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Tell me more</div>
+                    <div class="aid-sc-chip" id="sc-c2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg> Give examples</div>
+                    <div class="aid-sc-chip" id="sc-c3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg> Simplify</div>
+                </div>
+                <div class="aid-sc-input">
+                    <span id="sc-input-text">Ask a follow-up...</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </div>
+                <svg class="aid-sc-cursor" id="sc-cursor" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" fill="#fff"/></svg>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const c1 = document.getElementById('sc-c1'), c2 = document.getElementById('sc-c2'), c3 = document.getElementById('sc-c3');
+        const cursor = document.getElementById('sc-cursor');
+        const input = document.getElementById('sc-input-text');
+        let t1, t2, t3, t4, t5, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5);
+            [c1, c2, c3].forEach(c => { c.classList.remove('show', 'hovered'); });
+            cursor.style.opacity = '0'; cursor.style.transform = 'translate(0px, 0px)';
+            input.textContent = 'Ask a follow-up...'; input.style.color = '#9ca3af';
+
+            t1 = setTimeout(() => { c1.classList.add('show'); }, 300);
+            t2 = setTimeout(() => { c2.classList.add('show'); }, 400);
+            t3 = setTimeout(() => { c3.classList.add('show'); }, 500);
+
+            t4 = setTimeout(() => {
+                cursor.style.opacity = '1';
+                cursor.style.transform = 'translate(-100px, -45px)'; // move to chip 2
+
+                t5 = setTimeout(() => {
+                    c2.classList.add('hovered');
+
+                    setTimeout(() => {
+                        cursor.style.transform = 'scale(0.9) translate(-110px, -50px)'; // click
+                        setTimeout(() => {
+                            cursor.style.transform = 'translate(-100px, -45px)'; // unclick
+                            input.textContent = 'Give examples'; input.style.color = '#111827';
+                            [c1, c2, c3].forEach(c => { c.classList.remove('show', 'hovered'); });
+
+                            setTimeout(() => { cursor.style.opacity = '0'; isAnimating = false; }, 500);
+                        }, 150);
+                    }, 500);
+                }, 600);
+            }, 1000);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'feedback-thumbs') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-ft-widget { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 8px; font-family: Inter, sans-serif; position: relative; }
+                .aid-ft-bubble { background: #f3f4f6; padding: 16px; border-radius: 12px 12px 12px 2px; color: #374151; font-size: 14px; line-height: 1.5; padding-bottom: 36px; position: relative;}
+                .aid-ft-actions { position: absolute; bottom: 8px; left: 16px; display: flex; gap: 8px; align-items: center; }
+                .aid-ft-btn { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: transparent; transition: all 0.2s; position: relative;}
+                .aid-ft-btn svg { width: 16px; height: 16px; }
+                
+                .aid-ft-btn.hovered { background: #e5e7eb; color: #4b5563; }
+                .aid-ft-btn.active.up { background: #dcfce7; color: #166534; transform: scale(1.1); }
+                .aid-ft-btn.active.down { background: #fee2e2; color: #991b1b; transform: scale(1.1); }
+                
+                .aid-ft-tooltip { position: absolute; top: -30px; left: 50%; transform: translateX(-50%) scale(0.9); opacity: 0; background: #1f2937; color: white; font-size: 11px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; pointer-events: none; transition: all 0.2s; }
+                .aid-ft-btn.active .aid-ft-tooltip { opacity: 1; transform: translateX(-50%) scale(1); top: -34px;}
+                
+                .aid-ft-particles { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+                .aid-ft-btn.active.up .aid-ft-particles { animation: ftPop 0.6s ease-out forwards; opacity: 1;}
+                
+                @keyframes ftPop {
+                    0% { transform: scale(0.5); opacity: 1; }
+                    50% { transform: scale(2); opacity: 1; }
+                    100% { transform: scale(2.5); opacity: 0; }
+                }
+
+                .aid-ft-cursor { position: absolute; width: 24px; height: 24px; top: 100px; left: 200px; opacity: 0; pointer-events: none; z-index: 20; transition: all 0.5s ease; }
+            </style>
+            <div class="aid-ft-widget" id="ft-box">
+                <div class="aid-ft-bubble">
+                    The deployment process has been streamlined to remove 3 redundant checks, reducing overall build time by 22%.
+                    <div class="aid-ft-actions">
+                        <div class="aid-ft-btn" id="ft-up">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                            <div class="aid-ft-tooltip">Thanks for feedback!</div>
+                            <svg class="aid-ft-particles" viewBox="0 0 50 50">
+                                <circle cx="25" cy="5" r="3" fill="#10b981"/><circle cx="45" cy="25" r="2" fill="#34d399"/><circle cx="25" cy="45" r="3" fill="#059669"/><circle cx="5" cy="25" r="2" fill="#10b981"/>
+                            </svg>
+                        </div>
+                        <div class="aid-ft-btn" id="ft-down">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
+                        </div>
+                    </div>
+                </div>
+                <svg class="aid-ft-cursor" id="ft-cursor" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linejoin="round" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" fill="#fff"/></svg>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const cursor = document.getElementById('ft-cursor');
+        const upBtn = document.getElementById('ft-up');
+        let t1, t2, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(t1); clearTimeout(t2);
+            upBtn.classList.remove('hovered', 'active', 'up');
+            cursor.style.opacity = '0'; cursor.style.transform = 'translate(0px, 0px)';
+
+            t1 = setTimeout(() => {
+                cursor.style.opacity = '1';
+                cursor.style.transform = 'translate(-175px, -35px)'; // move to thumbs up
+
+                t2 = setTimeout(() => {
+                    upBtn.classList.add('hovered');
+
+                    setTimeout(() => {
+                        cursor.style.transform = 'scale(0.9) translate(-195px, -40px)'; // click
+                        setTimeout(() => {
+                            cursor.style.transform = 'translate(-175px, -35px)'; // unclick
+                            upBtn.classList.remove('hovered');
+                            upBtn.classList.add('active', 'up');
+
+                            setTimeout(() => {
+                                cursor.style.opacity = '0';
+                                setTimeout(() => { isAnimating = false; }, 1000);
+                            }, 1000);
+                        }, 150);
+                    }, 500);
+                }, 600);
+            }, 600);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(t1); clearTimeout(t2); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'quality-meter') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-qm-widget { width: 100%; max-width: 440px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; font-family: Inter, sans-serif; }
+                .aid-qm-input { width: 100%; min-height: 80px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; font-size: 14px; color: #111827; box-sizing: border-box; resize: none; outline: none; transition: border-color 0.2s;}
+                .aid-qm-input:focus { border-color: #4f46e5; }
+                
+                .aid-qm-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+                .aid-qm-label { font-size: 12px; font-weight: 600; color: #6b7280; transition: color 0.3s; }
+                
+                .aid-qm-bar-bg { flex: 1; height: 6px; background: #f3f4f6; border-radius: 3px; margin: 0 12px; overflow: hidden; position: relative;}
+                .aid-qm-bar-fill { height: 100%; width: 0%; background: #ef4444; border-radius: 3px; transition: all 0.5s ease-out; }
+                
+                .aid-qm-bar-fill.vague { background: #ef4444; width: 30%; }
+                .aid-qm-bar-fill.okay { background: #f59e0b; width: 65%; }
+                .aid-qm-bar-fill.good { background: #10b981; width: 95%; }
+            </style>
+            <div class="aid-qm-widget">
+                <textarea class="aid-qm-input" id="qm-input" placeholder="Enter your prompt..."></textarea>
+                <div class="aid-qm-footer">
+                    <span class="aid-qm-label" id="qm-label">Prompt Quality</span>
+                    <div class="aid-qm-bar-bg">
+                        <div class="aid-qm-bar-fill" id="qm-bar"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const input = document.getElementById('qm-input');
+        const bar = document.getElementById('qm-bar');
+        const label = document.getElementById('qm-label');
+        let activeTimer, t1, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearInterval(activeTimer); clearTimeout(t1);
+            input.value = ''; bar.className = 'aid-qm-bar-fill'; label.textContent = 'Prompt Quality'; label.style.color = '#6b7280';
+
+            const textParts = [
+                { t: "Write a blog post", class: "vague", lbl: "Too vague", col: "#ef4444" },
+                { t: " about AI replacing jobs in the tech sector", class: "okay", lbl: "Getting better", col: "#f59e0b" },
+                { t: ". Include 3 real-world statistics, adopt an optimistic tone, and format with markdown headers.", class: "good", lbl: "Excellent prompt!", col: "#10b981" }
+            ];
+
+            let pIdx = 0;
+
+            t1 = setTimeout(() => {
+                const typePart = () => {
+                    if (pIdx >= textParts.length) { isAnimating = false; return; }
+                    const part = textParts[pIdx];
+                    let i = 0;
+                    activeTimer = setInterval(() => {
+                        input.value += part.t.charAt(i); i++;
+                        if (i >= part.t.length) {
+                            clearInterval(activeTimer);
+                            bar.className = 'aid-qm-bar-fill ' + part.class;
+                            label.textContent = part.lbl; label.style.color = part.col;
+                            pIdx++;
+                            setTimeout(typePart, 800);
+                        }
+                    }, 40);
+                };
+                typePart();
+            }, 600);
+        };
+        replayBtn.addEventListener('click', () => { clearInterval(activeTimer); clearTimeout(t1); isAnimating = false; startDemo(); });
+        startDemo();
+
+    } else if (id === 'toast-notification') {
+        container.innerHTML = replayBtnStyle + `
+            <style>
+                .aid-tn-widget { width: 100%; max-width: 480px; height: 280px; position: relative; font-family: Inter, sans-serif; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px;}
+                
+                .aid-tn-toast { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin-top: 8px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: #374151; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: translateX(120%); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+                .aid-tn-toast.show { transform: translateX(0); opacity: 1; }
+                .aid-tn-toast.hide { transform: translateX(120%); opacity: 0; margin-top: -40px; padding: 0; height: 0; border: none;}
+                
+                .aid-tn-icon { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; }
+                .aid-tn-toast.success .aid-tn-icon { color: #10b981; background: #d1fae5; }
+                .aid-tn-toast.info .aid-tn-icon { color: #3b82f6; background: #dbeafe; }
+                .aid-tn-toast.warn .aid-tn-icon { color: #f59e0b; background: #fef3c7; }
+                
+                .aid-tn-backdrop { position: absolute; inset: 0; background-image: radial-gradient(#d1d5db 1px, transparent 1px); background-size: 20px 20px; opacity: 0.3; z-index: 0; }
+            </style>
+            <div class="aid-tn-widget">
+                <div class="aid-tn-backdrop"></div>
+                <div style="z-index:10; display:flex; flex-direction:column; gap:8px;">
+                    <div class="aid-tn-toast success" id="tn-t1">
+                        <div class="aid-tn-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                        Generation complete
+                    </div>
+                    <div class="aid-tn-toast info" id="tn-t2">
+                        <div class="aid-tn-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></div>
+                        1,240 tokens used
+                    </div>
+                    <div class="aid-tn-toast warn" id="tn-t3">
+                        <div class="aid-tn-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+                        Approaching organization rate limit
+                    </div>
+                </div>
+            </div>
+        `;
+        const replayBtn = document.getElementById('raw-demo-replay');
+        const t1 = document.getElementById('tn-t1'), t2 = document.getElementById('tn-t2'), t3 = document.getElementById('tn-t3');
+        let to1, to2, to3, to4, isAnimating = false;
+
+        const startDemo = () => {
+            if (isAnimating) return; isAnimating = true;
+            clearTimeout(to1); clearTimeout(to2); clearTimeout(to3); clearTimeout(to4);
+            [t1, t2, t3].forEach(t => { t.className = t.className.replace(' show', '').replace(' hide', ''); });
+
+            to1 = setTimeout(() => { t1.classList.add('show'); }, 400);
+            to2 = setTimeout(() => { t2.classList.add('show'); }, 1200);
+            to3 = setTimeout(() => { t3.classList.add('show'); }, 2000);
+            to4 = setTimeout(() => {
+                t1.className += ' hide';
+                setTimeout(() => { isAnimating = false; }, 500);
+            }, 3500);
+        };
+        replayBtn.addEventListener('click', () => { clearTimeout(to1); clearTimeout(to2); clearTimeout(to3); clearTimeout(to4); isAnimating = false; startDemo(); });
+        startDemo();
     } else {
         // High fidelity generic animated layout for ANY un-handled pattern/component
         container.innerHTML = replayBtnStyle + `
