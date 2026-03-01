@@ -2055,3 +2055,145 @@ em {
     grid-template-columns: 1fr;
   }
 }
+
+/* ════════════════════════════════════════════════════════ */
+/*  DARK MODE & MICRO-INTERACTIONS OVERRIDES              */
+/* ════════════════════════════════════════════════════════ */
+
+/* Global Transitions for smooth theme switching */
+body,
+.services__card,
+.about,
+.industry,
+.testimonials,
+.footer,
+.dashboard__mockup,
+.genai__mockup,
+.industry__card,
+.testimonial-card,
+.blog-card,
+.blog-card__content {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+[data-theme="dark"] {
+  --bg-light: #09090b;
+  --bg-card: #18181b;
+  --text-on-light: #f9fafb;
+  --text-muted: #a1a1aa;
+  --border-color: #27272a;
+  --tag-bg: #27272a;
+  --tag-text: #e4e4e7;
+  --gray-50: #0f0f11;
+  --gray-100: #18181b;
+  --gray-200: #27272a;
+  --gray-300: #3f3f46;
+  --gray-500: #a1a1aa;
+  --gray-700: #d4d4d8;
+  --gray-900: #f4f4f5;
+}
+
+/* Enhancing Micro-interactions */
+/* Services/Cards Hover Lift */
+.services__card:hover,
+.industry__card:hover,
+.blog-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons micro-state */
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Theme Toggle SVG styles */
+[data-theme="dark"] .theme-icon-moon {
+  display: none !important;
+}
+
+[data-theme="dark"] .theme-icon-sun {
+  display: block !important;
+}
+
+/* Light to Dark Element Overrides */
+[data-theme="dark"] .about__stat-desc {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .about__heading,
+[data-theme="dark"] .about__stat-number {
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .genai__mockup-header {
+  background: var(--bg-card);
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .genai__mockup-body {
+  background: var(--bg-light);
+}
+
+[data-theme="dark"] .genai__mockup-input {
+  background: var(--gray-50);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .genai__mockup-greeting h3 {
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .genai__mockup-greeting p {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .industry__card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .industry__card-title,
+[data-theme="dark"] .industry__heading {
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .testimonial-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .testimonial-card__name,
+[data-theme="dark"] .testimonials__heading {
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .testimonial-card__role,
+[data-theme="dark"] .section-label--dark {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .testimonial-card__text {
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .blog-card__content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: none;
+}
+
+[data-theme="dark"] .blog-card__title {
+  color: var(--text-on-light);
+}
+
+[data-theme="dark"] .blog-card__meta,
+[data-theme="dark"] .blog-card__category {
+  color: var(--text-muted);
+}
