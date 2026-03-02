@@ -3,7 +3,7 @@ function renderInteractiveMockup(id, data, container) {
     const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
 
     if (isDarkTheme) {
-        container.style.background = `url("https://images.unsplash.com/photo-1551384963-cccb0b7ed94b?q=80&w=3247&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center/cover`;
+        container.style.background = `url("assets/images/widget-bg.png") center/cover`;
         container.style.animation = 'bg-move 10s ease-in-out infinite alternate';
     } else {
         container.style.background = `linear-gradient(135deg, ${previewBg}, ${data.color}15)`;
@@ -182,24 +182,22 @@ function renderInteractiveMockup(id, data, container) {
                     transform: scale(1.05);
                 }
             </style>
-            <div class="glass-container" style="width: 100%; border-radius: 12px; overflow: hidden; position: relative;">
-                <div class="glass-filter"></div>
-                <div class="glass-overlay"></div>
-                <div class="glass-specular"></div>
-                <div class="glass-content" style="padding: 0;">
-                    <div class="aid-raw-input-widget">
-                        <div class="aid-raw-interactive-area" id="raw-interactive-area">
-                            <input type="text" id="raw-demo-input" class="aid-raw-input-field" placeholder="Message AI..." autocomplete="off">
-                            <div class="aid-raw-waveform">
-                                <i></i><i></i><i></i><i></i><i></i><i></i>
-                            </div>
-                            <button id="raw-demo-voice" class="aid-raw-btn aid-raw-voice" title="Voice Input">
-                                <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
-                            </button>
-                            <button id="raw-demo-send" class="aid-raw-btn aid-raw-send" title="Send Request">
-                                <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                            </button>
+            <div class="aid-raw-input-widget">
+                <div class="aid-raw-interactive-area glass-container" id="raw-interactive-area" style="position: relative; overflow: hidden; background: transparent;">
+                    <div class="glass-filter"></div>
+                    <div class="glass-overlay"></div>
+                    <div class="glass-specular"></div>
+                    <div class="glass-content" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 0;">
+                        <input type="text" id="raw-demo-input" class="aid-raw-input-field" placeholder="Message AI..." autocomplete="off">
+                        <div class="aid-raw-waveform">
+                            <i></i><i></i><i></i><i></i><i></i><i></i>
                         </div>
+                        <button id="raw-demo-voice" class="aid-raw-btn aid-raw-voice" title="Voice Input">
+                            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                        </button>
+                        <button id="raw-demo-send" class="aid-raw-btn aid-raw-send" title="Send Request">
+                            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
                     </div>
                 </div>
             </div>
