@@ -888,6 +888,45 @@
 }
 
 /* Figma Export Button */
+.glass-filter,
+.glass-overlay,
+.glass-specular {
+    display: none;
+}
+
+[data-theme="dark"] .glass-filter {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    backdrop-filter: blur(0px);
+    filter: url(#lg-dist);
+    isolation: isolate;
+    display: block;
+}
+
+[data-theme="dark"] .glass-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.04);
+    display: block;
+}
+
+[data-theme="dark"] .glass-specular {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    overflow: hidden;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.15), inset 0 0 5px rgba(255, 255, 255, 0.05);
+    display: block;
+}
+
+[data-theme="dark"] .glass-content {
+    position: relative;
+    z-index: 3;
+}
+
 .aid-figma-btn {
     display: inline-flex;
     align-items: center;
@@ -904,11 +943,24 @@
     cursor: not-allowed;
     opacity: 0.95;
     transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .aid-figma-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .aid-figma-btn {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .aid-figma-btn:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .aid-figma-icon {

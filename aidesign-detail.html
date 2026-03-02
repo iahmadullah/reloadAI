@@ -77,24 +77,31 @@
                         <p class="aid-detail-hero__subtitle" id="detail-subtitle">Short description goes here.</p>
                     </div>
                     <div class="aid-detail-hero__actions" style="margin-top: 20px;">
-                        <button class="aid-figma-btn" disabled title="Figma Export (Coming Soon)">
-                            <svg width="14" height="20" viewBox="0 0 38 57" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="aid-figma-icon">
-                                <path
-                                    d="M19 28.5V19H28.5C33.7467 19 38 23.2533 38 28.5C38 33.7467 33.7467 38 28.5 38H19V28.5Z"
-                                    fill="#1ABCFE" />
-                                <path
-                                    d="M0 47.5C0 42.2533 4.25329 38 9.5 38H19V47.5C19 52.7467 14.7467 57 9.5 57C4.25329 57 0 52.7467 0 47.5Z"
-                                    fill="#0ACF83" />
-                                <path d="M19 0L9.5 0C4.25329 0 0 4.25329 0 9.5C0 14.7467 4.25329 19 9.5 19H19V0Z"
-                                    fill="#F24E1E" />
-                                <path d="M0 28.5C0 23.2533 4.25329 19 9.5 19H19V38H9.5C4.25329 38 0 33.7467 0 28.5Z"
-                                    fill="#A259FF" />
-                                <path d="M38 9.5C38 4.25329 33.7467 0 28.5 0H19V19H28.5C33.7467 19 38 14.7467 38 9.5Z"
-                                    fill="#FF7262" />
-                            </svg>
-                            Figma Export
-                            <span class="aid-coming-soon-chip">Coming soon</span>
+                        <button class="aid-figma-btn glass-container" disabled title="Figma Export (Coming Soon)">
+                            <div class="glass-filter"></div>
+                            <div class="glass-overlay"></div>
+                            <div class="glass-specular"></div>
+                            <div class="glass-content glass-content--inline"
+                                style="display: flex; align-items: center; gap: 10px;">
+                                <svg width="14" height="20" viewBox="0 0 38 57" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="aid-figma-icon">
+                                    <path
+                                        d="M19 28.5V19H28.5C33.7467 19 38 23.2533 38 28.5C38 33.7467 33.7467 38 28.5 38H19V28.5Z"
+                                        fill="#1ABCFE" />
+                                    <path
+                                        d="M0 47.5C0 42.2533 4.25329 38 9.5 38H19V47.5C19 52.7467 14.7467 57 9.5 57C4.25329 57 0 52.7467 0 47.5Z"
+                                        fill="#0ACF83" />
+                                    <path d="M19 0L9.5 0C4.25329 0 0 4.25329 0 9.5C0 14.7467 4.25329 19 9.5 19H19V0Z"
+                                        fill="#F24E1E" />
+                                    <path d="M0 28.5C0 23.2533 4.25329 19 9.5 19H19V38H9.5C4.25329 38 0 33.7467 0 28.5Z"
+                                        fill="#A259FF" />
+                                    <path
+                                        d="M38 9.5C38 4.25329 33.7467 0 28.5 0H19V19H28.5C33.7467 19 38 14.7467 38 9.5Z"
+                                        fill="#FF7262" />
+                                </svg>
+                                Figma Export
+                                <span class="aid-coming-soon-chip">Coming soon</span>
+                            </div>
                         </button>
                     </div>
                 </div>
@@ -245,6 +252,15 @@
     <script src="script.js"></script>
     <script src="mockup-renderer.js"></script>
     <script src="aidesign-detail-data.js"></script>
+
+    <!-- LIQUID GLASS SVG FILTER -->
+    <svg style="display: none">
+        <filter id="lg-dist" x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.008" numOctaves="2" seed="92" result="noise" />
+            <feGaussianBlur in="noise" stdDeviation="2" result="blurred" />
+            <feDisplacementMap in="SourceGraphic" in2="blurred" scale="40" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+    </svg>
 </body>
 
 </html>
