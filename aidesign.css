@@ -1058,11 +1058,11 @@ body,
 
 /* Tabs & Filters */
 [data-theme="dark"] .aid-tabs {
-    background: color-mix(in oklch, var(--white), transparent 90%);
+    background: hsl(0 0% 0% / 0.1);
     backdrop-filter: blur(20px) saturate(1.5);
     box-shadow:
-        0 0 2px 1px color-mix(in oklch, var(--white), transparent 65%) inset,
-        0 0 10px 4px color-mix(in oklch, var(--white), transparent 85%) inset,
+        0 0 2px 1px color-mix(in oklch, var(--white), #0000 65%) inset,
+        0 0 10px 4px color-mix(in oklch, var(--white), #0000 85%) inset,
         0px 4px 16px rgba(17, 17, 26, 0.05),
         0px 8px 24px rgba(17, 17, 26, 0.05),
         0px 16px 56px rgba(17, 17, 26, 0.05),
@@ -1073,8 +1073,8 @@ body,
 
 [data-theme="dark"] .aid-tabbar__cta {
     box-shadow:
-        0 0 2px 1px color-mix(in oklch, var(--white), transparent 65%) inset,
-        0 0 10px 4px color-mix(in oklch, var(--white), transparent 85%) inset,
+        0 0 2px 1px color-mix(in oklch, var(--white), #0000 65%) inset,
+        0 0 10px 4px color-mix(in oklch, var(--white), #0000 85%) inset,
         0px 4px 16px rgba(17, 17, 26, 0.05),
         0px 8px 24px rgba(17, 17, 26, 0.05),
         0px 16px 56px rgba(17, 17, 26, 0.05),
@@ -1084,17 +1084,17 @@ body,
 }
 
 [data-theme="dark"] .aid-tab {
-    color: color-mix(in oklch, var(--white), transparent 40%);
+    color: rgba(255, 255, 255, 0.65);
 }
 
 [data-theme="dark"] .aid-tab:hover {
-    color: var(--white);
+    color: rgba(255, 255, 255, 1);
 }
 
 [data-theme="dark"] .aid-tab--active {
-    background: color-mix(in oklch, var(--white), transparent 85%);
-    color: var(--white);
-    box-shadow: 0 0 0 1px color-mix(in oklch, var(--white), transparent 85%) inset;
+    background: var(--white);
+    color: #000;
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--white), #0000 85%) inset;
 }
 
 [data-theme="dark"] .aid-filter {
