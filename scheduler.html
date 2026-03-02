@@ -7,6 +7,11 @@
     <title>Smart Scheduler | Reloadux</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
         :root {
             --bg: #f8f9fc;
@@ -1127,6 +1132,64 @@
         .sched-table.day-view td.day-active {
             width: 100%
         }
+
+        /* ── Dark Mode Overrides ── */
+        [data-theme="dark"] {
+            --bg: #09090b;
+            --white: #18181b;
+            --text: #f4f4f5;
+            --muted: #a1a1aa;
+            --border: #27272a;
+            --border-lt: #3f3f46;
+            --accent-bg: rgba(99, 102, 241, .15);
+            --accent-glow: rgba(99, 102, 241, .25);
+            --green-bg: rgba(16, 185, 129, .15);
+            --orange-bg: rgba(245, 158, 11, .15);
+            --red-bg: rgba(239, 68, 68, .15);
+            --blue-bg: rgba(59, 130, 246, .15);
+            --purple-bg: rgba(139, 92, 246, .15);
+            --pink-bg: rgba(236, 72, 153, .15);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, .2);
+            --shadow: 0 4px 16px rgba(0, 0, 0, .3);
+        }
+
+        [data-theme="dark"] .shift-block.morning {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.3)
+        }
+
+        [data-theme="dark"] .shift-block.day {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border-color: rgba(139, 92, 246, 0.3)
+        }
+
+        [data-theme="dark"] .shift-block.afternoon {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.3)
+        }
+
+        [data-theme="dark"] .shift-block.night {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            border-color: rgba(99, 102, 241, 0.3)
+        }
+
+        [data-theme="dark"] .shift-block.off {
+            background: var(--bg);
+            color: var(--muted);
+            border-color: var(--border);
+        }
+
+        [data-theme="dark"] .theme-icon-moon {
+            display: none !important;
+        }
+
+        [data-theme="dark"] .theme-icon-sun {
+            display: block !important;
+        }
     </style>
 </head>
 
@@ -1139,6 +1202,18 @@
             <a class="hdr-link active" href="#">scheduler</a>
         </div>
         <div class="hdr-right">
+            <button class="hdr-icon" id="theme-toggle" title="Toggle Theme" aria-label="Toggle dark mode">
+                <svg class="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <circle cx="12" cy="12" r="5" />
+                    <path
+                        d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                </svg>
+                <svg class="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
             <button class="hdr-icon" title="Notifications">🔔</button>
             <button class="hdr-icon" title="Settings">⚙️</button>
             <div class="hdr-av">MS</div>
@@ -1571,6 +1646,21 @@
         // Init
         renderGrid();
         switchTab(document.querySelector('.cp-tab'), 'chat');
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        }
     </script>
 </body>
 
