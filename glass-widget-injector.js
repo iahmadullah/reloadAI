@@ -160,94 +160,183 @@
         const s = document.createElement('style');
         s.id = 'glass-dark-text-fix';
         s.textContent = `
-/* ── Glass widget dark-mode overrides ── */
+/* ══════════════════════════════════════════════
+   Glass Dark Mode Overrides — targets exact class
+   names from mockup-renderer.js widget templates
+   ══════════════════════════════════════════════ */
 
-/* All text white */
-#detail-preview .glass-content *:not(img):not(svg):not(path):not(circle):not(rect):not(line):not(polyline):not(polygon) {
+/* ── 1. Universal text colour (all non-image children) ── */
+#detail-preview .glass-content *:not(img):not(video):not(canvas) {
     color: rgba(255,255,255,0.88) !important;
 }
 
-/* Placeholder text */
+/* ── 2. Placeholder text ── */
 #detail-preview .glass-content input::placeholder,
 #detail-preview .glass-content textarea::placeholder {
-    color: rgba(255,255,255,0.38) !important;
+    color: rgba(255,255,255,0.35) !important;
 }
 
-/* All white solid backgrounds → semi-transparent dark glass */
-#detail-preview .glass-content [style*="background: #fff"],
-#detail-preview .glass-content [style*="background:#fff"],
-#detail-preview .glass-content [style*="background: #ffffff"],
-#detail-preview .glass-content [style*="background: white"] {
-    background: rgba(255,255,255,0.07) !important;
-}
-
-/* Light grey backgrounds (#f3f4f6, #f9fafb, etc.) → slightly lighter glass */
-#detail-preview .glass-content [style*="background: #f3f4f6"],
-#detail-preview .glass-content [style*="background: #f9fafb"],
-#detail-preview .glass-content [style*="background: #f1f5f9"],
-#detail-preview .glass-content [style*="background: #f8fafc"],
-#detail-preview .glass-content [style*="background:#f3f4f6"],
-#detail-preview .glass-content [style*="background:#f9fafb"] {
-    background: rgba(255,255,255,0.04) !important;
-}
-
-/* Borders */
-#detail-preview .glass-content [style*="border: 1px solid #e5e7eb"],
-#detail-preview .glass-content [style*="border-color: #e5e7eb"],
-#detail-preview .glass-content [style*="border:1px solid #e5e7eb"] {
-    border-color: rgba(255,255,255,0.12) !important;
-}
-
-/* Inputs / textareas */
+/* ── 3. Inputs & textareas ── */
 #detail-preview .glass-content input,
-#detail-preview .glass-content textarea {
-    background: rgba(255,255,255,0.06) !important;
-    border-color: rgba(255,255,255,0.15) !important;
-    color: #fff !important;
-}
-
-/* Buttons inside widgets */
-#detail-preview .glass-content button,
-#detail-preview .glass-content [role="button"] {
-    border-color: rgba(255,255,255,0.15) !important;
+#detail-preview .glass-content textarea,
+#detail-preview .glass-content select {
     background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.15) !important;
+    color: rgba(255,255,255,0.9) !important;
 }
 
-/* SVG icons — force stroke white so they render on dark bg */
-#detail-preview .glass-content svg:not([class*="aid-figma"]) *[stroke]:not([stroke="none"]):not([stroke="currentColor"]) {
-    stroke: rgba(255,255,255,0.75) !important;
-}
-#detail-preview .glass-content svg:not([class*="aid-figma"]) *[fill]:not([fill="none"]):not([fill="currentColor"]):not([fill^="#"] ) {
-    fill: rgba(255,255,255,0.75) !important;
-}
-/* currentColor inheriting SVGs will follow the color:white rule above */
+/* ── 4. SVG icon colours ── */
 #detail-preview .glass-content svg {
     color: rgba(255,255,255,0.75) !important;
 }
+#detail-preview .glass-content svg path,
+#detail-preview .glass-content svg circle,
+#detail-preview .glass-content svg rect,
+#detail-preview .glass-content svg polyline,
+#detail-preview .glass-content svg polygon,
+#detail-preview .glass-content svg line {
+    stroke: rgba(255,255,255,0.75) !important;
+    fill: none !important;
+}
+/* ── 4b. Filled SVG icons (explicit fill not 'none') ── */
+#detail-preview .glass-content svg [fill]:not([fill="none"]) {
+    fill: rgba(255,255,255,0.75) !important;
+}
 
-/* Skeleton / progress bars */
+/* ── 5. Widget outer card (all known mockup class names) ── */
+#detail-preview .glass-content .aid-img-mockup,
+#detail-preview .glass-content .aid-voice-mockup,
+#detail-preview .glass-content .aid-ih-mockup,
+#detail-preview .glass-content .aid-pqf-mockup,
+#detail-preview .glass-content .aid-stream-mockup,
+#detail-preview .glass-content .aid-inline-mockup,
+#detail-preview .glass-content .aid-sp-mockup,
+#detail-preview .glass-content .aid-pp-mockup,
+#detail-preview .glass-content .aid-rm-mockup,
+#detail-preview .glass-content .aid-pt-mockup,
+#detail-preview .glass-content .aid-cp-mockup,
+#detail-preview .glass-content .aid-cc-mockup,
+#detail-preview .glass-content .aid-pd-mockup,
+#detail-preview .glass-content .aid-ci-mockup,
+#detail-preview .glass-content .aid-mvo-mockup,
+#detail-preview .glass-content .aid-rrp-mockup,
+#detail-preview .glass-content .aid-ie-mockup,
+#detail-preview .glass-content .aid-sr-mockup,
+#detail-preview .glass-content .aid-fl-mockup,
+#detail-preview .glass-content .aid-vh-mockup,
+#detail-preview .glass-content .aid-tp-mockup,
+#detail-preview .glass-content .aid-ep-mockup,
+#detail-preview .glass-content .aid-ra-mockup,
+#detail-preview .glass-content .aid-fr-mockup,
+#detail-preview .glass-content .aid-tm-mockup,
+#detail-preview .glass-content .aid-sc-mockup,
+#detail-preview .glass-content .aid-kb-mockup,
+#detail-preview .glass-content .aid-pl-mockup,
+#detail-preview .glass-content .aid-gr-mockup,
+#detail-preview .glass-content .aid-tw-mockup,
+#detail-preview .glass-content .aid-ms-mockup,
+#detail-preview .glass-content .aid-cw-mockup,
+#detail-preview .glass-content .aid-bi-mockup,
+#detail-preview .glass-content .aid-sa-mockup,
+#detail-preview .glass-content .aid-to-mockup,
+#detail-preview .glass-content .aid-th-mockup,
+#detail-preview .glass-content .aid-gt-mockup,
+#detail-preview .glass-content .aid-aic-mockup,
+#detail-preview .glass-content .aid-aar-mockup,
+#detail-preview .glass-content .aid-pc-mockup,
+#detail-preview .glass-content .aid-vw-mockup,
+#detail-preview .glass-content .aid-fdz-mockup,
+#detail-preview .glass-content .aid-ctk-mockup,
+#detail-preview .glass-content .aid-arb-mockup,
+#detail-preview .glass-content .aid-dv-mockup,
+#detail-preview .glass-content .aid-generic-mockup {
+    background: rgba(255,255,255,0.06) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+    box-shadow: none !important;
+}
+
+/* ── 6. Light-coloured inner elements ── */
+/* Voice: display area, status pill, mic button */
+#detail-preview .glass-content .aid-voice-display,
+#detail-preview .glass-content .aid-voice-status,
+#detail-preview .glass-content .aid-voice-btn {
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Image input: inner card + input area */
+#detail-preview .glass-content .aid-img-input-area,
+#detail-preview .glass-content .aid-img-bubble {
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Prompt Quality inner composer */
+#detail-preview .glass-content .aid-pqf-composer,
+#detail-preview .glass-content .aid-pqf-feedback,
+#detail-preview .glass-content .aid-pqf-bar-bg {
+    background: rgba(255,255,255,0.07) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Streaming / inline response cards */
+#detail-preview .glass-content .aid-stream-card,
+#detail-preview .glass-content .aid-rrp-card,
+#detail-preview .glass-content .aid-ie-card {
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+}
+
+/* Toolbar / action buttons */
+#detail-preview .glass-content .aid-fl-btn,
+#detail-preview .glass-content .aid-ra-btn,
+#detail-preview .glass-content .aid-fr-btn,
+#detail-preview .glass-content .aid-toolbar-btn,
+#detail-preview .glass-content [class*="-action-btn"],
+#detail-preview .glass-content [class*="-btn"]:not([class*="thumb"]) {
+    background: rgba(255,255,255,0.08) !important;
+    border-color: rgba(255,255,255,0.14) !important;
+}
+
+/* Dropdown menus */
+#detail-preview .glass-content .aid-cp-menu,
+#detail-preview .glass-content .aid-pt-dropdown,
+#detail-preview .glass-content [class*="-dropdown"],
+#detail-preview .glass-content [class*="-menu"] {
+    background: rgba(20,20,30,0.88) !important;
+    border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* Skeleton / loader lines */
+#detail-preview .glass-content .aid-sr-line,
 #detail-preview .glass-content [class*="-line"],
-#detail-preview .glass-content [class*="-bar"]:not([class*="tab"]),
-#detail-preview .glass-content [class*="-track"],
-#detail-preview .glass-content [class*="skeleton"] {
+#detail-preview .glass-content [class*="-skeleton"],
+#detail-preview .glass-content [class*="-track"] {
     background: rgba(255,255,255,0.1) !important;
 }
 
-/* Selected / active tab pills inside widgets */
-#detail-preview .glass-content [class*="-tab"].active,
-#detail-preview .glass-content [class*="-tab"][class*="active"] {
+/* Progress fill bar (keep the brand colour) */
+#detail-preview .glass-content [class*="-fill"][style*="width"] {
+    opacity: 0.85;
+}
+
+/* Active tab inside widget */
+#detail-preview .glass-content .aid-ih-tab.active,
+#detail-preview .glass-content [class*="-tab"].active {
     background: rgba(255,255,255,0.14) !important;
     color: #fff !important;
+    box-shadow: none !important;
 }
 
-/* Feedback/quality meter bars */
-#detail-preview .glass-content [class*="-meter"],
-#detail-preview .glass-content [class*="-fill"],
-#detail-preview .glass-content [class*="-progress"] {
-    opacity: 0.8;
+/* Generic light-grey panels */
+#detail-preview .glass-content [class*="-panel"],
+#detail-preview .glass-content [class*="-box"],
+#detail-preview .glass-content [class*="-section"] {
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.1) !important;
 }
 
-/* Overall container border */
+/* Outer container border */
 #detail-preview .glass-container {
     border-color: rgba(255,255,255,0.12) !important;
 }
