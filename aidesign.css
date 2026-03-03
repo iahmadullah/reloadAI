@@ -1240,3 +1240,125 @@ body,
 [data-theme="dark"] .header--light .header__hamburger span {
     background: var(--white);
 }
+
+/* ════════════════════════════════════════════════════════════
+   LIQUID GLASS — Widget sweep (all dark-mode widget cards)
+   Makes every primary card background transparent so the
+   glass-widget-injector.js SVG refraction system can take over.
+   ════════════════════════════════════════════════════════════ */
+
+/* Container gets the widget background image */
+[data-theme="dark"] #detail-preview {
+    background: url("assets/images/widget-bg.png") center/cover !important;
+    animation: bg-move 12s ease-in-out infinite alternate;
+}
+
+@keyframes bg-move {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* All known primary widget card elements → transparent in dark mode */
+[data-theme="dark"] .aid-img-mockup,
+[data-theme="dark"] .aid-voice-widget,
+[data-theme="dark"] .aid-inline-help-widget,
+[data-theme="dark"] .aid-pqf-widget,
+[data-theme="dark"] .aid-stream-widget,
+[data-theme="dark"] .aid-inline-widget,
+[data-theme="dark"] .aid-struct-widget,
+[data-theme="dark"] .aid-pag-widget,
+[data-theme="dark"] .aid-ref-widget,
+[data-theme="dark"] .aid-tmpl-widget,
+[data-theme="dark"] .aid-clz-widget,
+[data-theme="dark"] .aid-cfg-widget,
+[data-theme="dark"] .aid-pd-widget,
+[data-theme="dark"] .aid-ci-widget,
+[data-theme="dark"] .aid-mv-widget,
+[data-theme="dark"] .aid-rrp-widget,
+[data-theme="dark"] .aid-ie-widget,
+[data-theme="dark"] .aid-sr-widget,
+[data-theme="dark"] .aid-fl-widget,
+[data-theme="dark"] .aid-vh-widget,
+[data-theme="dark"] .aid-tp-widget,
+[data-theme="dark"] .aid-ec-widget,
+[data-theme="dark"] .aid-ra-widget,
+[data-theme="dark"] .aid-fregen-widget,
+[data-theme="dark"] .aid-tone-widget,
+[data-theme="dark"] .aid-sc-widget,
+[data-theme="dark"] .aid-kb-widget,
+[data-theme="dark"] .aid-pl-widget,
+[data-theme="dark"] .aid-guard-widget,
+[data-theme="dark"] .aid-tw-widget,
+[data-theme="dark"] .aid-ms-widget,
+[data-theme="dark"] .aid-cw-widget,
+[data-theme="dark"] .aid-bi-widget,
+[data-theme="dark"] .aid-sa-widget,
+[data-theme="dark"] .aid-to-widget,
+[data-theme="dark"] .aid-th-widget,
+[data-theme="dark"] .aid-gt-widget,
+[data-theme="dark"] .aid-aic-widget,
+[data-theme="dark"] .aid-aar-widget,
+[data-theme="dark"] .aid-pc-widget,
+[data-theme="dark"] .aid-vw-widget,
+[data-theme="dark"] .aid-fdz-widget,
+[data-theme="dark"] .aid-cc-widget,
+[data-theme="dark"] .aid-tc-widget,
+[data-theme="dark"] .aid-arb-widget,
+[data-theme="dark"] .aid-cb-widget,
+[data-theme="dark"] .aid-ccard-widget,
+[data-theme="dark"] .aid-dv-widget,
+[data-theme="dark"] .aid-rc-widget,
+[data-theme="dark"] .aid-sug-widget,
+[data-theme="dark"] .aid-ft-widget,
+[data-theme="dark"] .aid-qm-widget,
+[data-theme="dark"] .aid-tn-widget,
+[data-theme="dark"] .aid-generic-mockup {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Sub-elements inside widgets → readable in dark mode */
+[data-theme="dark"] #detail-preview input,
+[data-theme="dark"] #detail-preview textarea {
+    background: transparent !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] #detail-preview p,
+[data-theme="dark"] #detail-preview span:not(.aid-coming-soon-chip),
+[data-theme="dark"] #detail-preview label,
+[data-theme="dark"] #detail-preview h3,
+[data-theme="dark"] #detail-preview h4 {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Chip/tag elements inside widgets */
+[data-theme="dark"] #detail-preview .chip,
+[data-theme="dark"] #detail-preview [class*="chip"],
+[data-theme="dark"] #detail-preview [class*="-tag"],
+[data-theme="dark"] #detail-preview [class*="-badge"]:not(.aid-coming-soon-chip) {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Inner card/panel backgrounds inside widgets */
+[data-theme="dark"] #detail-preview [class*="-card"],
+[data-theme="dark"] #detail-preview [class*="-panel"],
+[data-theme="dark"] #detail-preview [class*="-box"],
+[data-theme="dark"] #detail-preview [class*="-area"]:not(.aid-raw-interactive-area) {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
