@@ -271,13 +271,16 @@
     border-color: rgba(255,255,255,0.12) !important;
 }
 
-/* Prompt Quality inner composer */
+
+/* Prompt Quality inner composer + footer */
 #detail-preview .glass-content .aid-pqf-composer,
 #detail-preview .glass-content .aid-pqf-feedback,
-#detail-preview .glass-content .aid-pqf-bar-bg {
+#detail-preview .glass-content .aid-pqf-bar-bg,
+#detail-preview .glass-content .aid-pqf-footer {
     background: rgba(255,255,255,0.07) !important;
     border-color: rgba(255,255,255,0.12) !important;
 }
+
 
 /* Streaming / inline response cards */
 #detail-preview .glass-content .aid-stream-card,
